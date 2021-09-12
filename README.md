@@ -1,0 +1,1 @@
+A web app to assist web designers in diversifying and improving their color palettes
