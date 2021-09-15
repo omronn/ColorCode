@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import sys
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# TODO below is internet solution to allow an apps folder to hold
+# all apps. May cause problems, don't know. The internet says it's ok
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,7 +36,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Our apps
     'HomePage.apps.HomepageConfig',
+
+    # django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

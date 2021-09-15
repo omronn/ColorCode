@@ -1,0 +1,2 @@
+This template folder is for general, sitewide templates
+Any app specific templates should remain in its respective app folder
