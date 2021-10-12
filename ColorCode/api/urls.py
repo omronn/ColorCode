@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import tempDummy
+from .views import PreferencesView
 
 urlpatterns = [
-    path('', tempDummy)
+    path('', PreferencesView.as_view()),
 ]
