@@ -1,15 +1,13 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { render } from "react-dom";
+import UserPreferences from "./UserPreferences";
 
 function App(props) {
-    return (<h1>Welcome to the homepage</h1>);
+    return (
+        <div>
+            <UserPreferences></UserPreferences>
+        </div>
+    );
 }
-
-const appDiv = document.getElementById("app");
-const element = <App />
-render(
-    element,
-    appDiv
-);
 
 export default App;
