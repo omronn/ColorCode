@@ -118,7 +118,7 @@ function UserPreferences() {
         ).catch((error) => console.log("Posting Preferences Failed"));
 
         // Forward to Palette Page
-        window.location.replace(window.location.href+"/Palette");
+        window.location.replace(window.location.href+"Palette");
     }
 
     const GenerateButton = () => {
