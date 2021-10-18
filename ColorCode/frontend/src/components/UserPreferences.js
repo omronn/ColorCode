@@ -115,10 +115,12 @@ function UserPreferences() {
                 setNumColors(data.num_colors);
                 setMainColor(data.main_color);
             }
+        ).then(
+            () => {
+                // Forward to Palette Page
+                window.location.replace("/Palette");
+            }
         ).catch((error) => console.log("Posting Preferences Failed"));
-
-        // Forward to Palette Page
-        window.location.replace(window.location.href+"Palette");
     }
 
     const GenerateButton = () => {

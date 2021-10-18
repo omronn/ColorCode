@@ -1,25 +1,17 @@
 import React, { useState } from "react";
-import { render } from "react-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom"
 import UserPreferences from "./UserPreferences";
+import Palette from "./Palette";
 
 function App(props) {
-    const path = window.location.href.split("/").at(-1);
-    if (path === 'Palette') {
-        // Return Palette Page
-        return (
-            <div>
-                TODO Palette results frontend
-            </div>
-        );
-    }
-    else {
-        // Return home page
-        return (
-            <div>
-                <UserPreferences></UserPreferences>
-            </div>
-        );
-    }
+    return (
+        <Router>
+            <Switch>
+                <Route exact path='/' component={UserPreferences}></Route>
+                <Route path='/Palette' component={Palette}></Route>
+            </Switch>
+        </Router>
+    );
 }
 
 export default App;

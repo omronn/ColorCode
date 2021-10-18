@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from rest_framework import generics, status
 from rest_framework.serializers import Serializer 
 from rest_framework.views import APIView 
@@ -7,6 +7,20 @@ from .serializers import UserPreferencesSerializer, UpdateUserPreferencesSeriali
 from .models import UserPreferences
 
 # Create your views here.
+
+class PaletteView(APIView):
+    update_serializer_class = UpdateUserPreferencesSerializer
+    serializer_class = UserPreferencesSerializer
+
+    def get(self, request, format=None):
+        user = self.request.session.session_key
+        # If a session exists for user, run palette generation
+        if self.request.session.exists(user):
+            # TODO return generation results
+            return Response({'TODO': 'THIS IS WHERE WE RETURN GENERATION RESULTS'}, status=status.HTTP_200_OK)
+        return Response({'Bad Request': 'User Session does not exist, route to home'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class PreferencesView(APIView):
     update_serializer_class = UpdateUserPreferencesSerializer
     serializer_class = UserPreferencesSerializer
