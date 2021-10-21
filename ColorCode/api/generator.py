@@ -74,3 +74,11 @@ class colorPalette:
             # as a starting point, let's just flip the colors for light mode
             # WITH THE EXCEPTION of the original color
             self.colorList[1:] = self.colorList[1:].reverse()
+
+    # functions for returning stuff
+
+    def getPalettes(self):
+        return self.colorList
+
+    def getBaseColor(self):
+        return self.baseColor
