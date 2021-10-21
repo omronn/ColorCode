@@ -4,29 +4,37 @@ import husl  # pip install husl
 
 # import { hsvaToHsla } from '@uiw/color-convert' # npm i @uiw/color-convert
 
+# NTS RE: USER_PREFERENCES
+# user_preferences  should be in dict format.
+# relevant values: "hue" int/float, "pastel" bool, "dark" bool, "many_hues" bool, "ccount" int
+
 
 class colorPalette:
-    def __init__(self, id):  # id is whatever we need to look up user preferences
+    def __init__(self, user_preferences):  # userprefs should be in dict format
         self.baseColor = "0047AB"  # hex value
         self.colorList = []  # list of hex elements to be filled
+        self.userPrefs = user_preferences
 
-        self.user_preferences = ""  # grab user data api at this point
+        # now Do The Things!
+        self.createBaseColor()
+        self.api_TCA_call()
+        self.paletteSort()
 
     # step 1: from user inputs, generate base color
 
     def createBaseColor(self):
         hslValue = [0.0, 0.0, 0.0]
 
-        hslValue[0] = 0  # whatever main_color hue is
+        hslValue[0] = self.userPrefs["hue"]  # whatever main_color hue is
 
         # if pastel preference is true
-        if True:
+        if self.userPrefs["pastel"] == True:
             hslValue[1] = 40
         else:
             hslValue[1] = 95
 
         # if dark mode preference is true
-        if True:
+        if self.userPrefs["dark"] == True:
             hslValue[2] = 40
         else:
             hslValue[2] = 75
@@ -45,12 +53,13 @@ class colorPalette:
         # choose appropriate palette type based on user preferences. HC'd to analogic atm
 
         # if many hues is true
-        if True:
+        if self.userPrefs["many_hues"] == True:
             url += "analogic-complement"
         else:
             url += "analogic"
 
-        url += "&count=" + "6"  # replace '6' with user preference num_colors - 1
+        colorCount = self.userPrefs["ccount"] - 1
+        url += "&count=" + colorCount  # replace '6' with user preference num_colors - 1
 
         jsonReq = requests.get(url)
         jsonLoad = json.load(jsonReq)
@@ -58,6 +67,7 @@ class colorPalette:
         for color in jsonLoad["colors"]:
             self.colorList.append(color["hex"]["clean"])
 
+        # TODO: possibly futz with analogic-complement to get more of the original value in there?
         # colorList should now be a list of hex codes
 
         return
@@ -70,12 +80,14 @@ class colorPalette:
         # TCA generally more or less returns palettes in order from darkest to lightest color
 
         # if light mode is selected
-        if False:
+        if self.userPrefs["dark"] == False:
             # as a starting point, let's just flip the colors for light mode
             # WITH THE EXCEPTION of the original color
             self.colorList[1:] = self.colorList[1:].reverse()
 
-    # functions for returning stuff
+    #####################################
+    ### functions for returning stuff ###
+    #####################################
 
     def getPalettes(self):
         return self.colorList
