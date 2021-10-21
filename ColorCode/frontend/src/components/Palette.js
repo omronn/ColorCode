@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 
 function Palette() {
     // TODO Declare Palette vars and setters with useState
+    const [baseColor, setBaseColor] = useState("000000");
+    const [colorJsonList, setJsonList] = useState("{}")
 
     const FetchPalette = () => {
         // Get preferences (new or old) and save the state
@@ -17,7 +19,11 @@ function Palette() {
             }
         ).then(
             (data) => {
-                // TODO set palette vars here
+                
+                console.log(data) // for testing purposes
+                setBaseColor(data.base_color)
+                setJsonList(data.palette_list)
+
             }
         ).catch((error) => {
             console.log('routing to preferences')
@@ -27,10 +33,13 @@ function Palette() {
         });
     }
 
-    //useEffect(FetchPalette(), []); KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
+    useEffect(FetchPalette(), []);  // KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
     return (
         <p>
-            This is the Palette Page TODO DISPLAY PALETTE
+            <h1>THE PALETTE:</h1>
+            <p> { baseColor } </p>
+            <p> { colorJsonList } </p>
+            <p> return to preferences page button </p>
         </p>
     );
 }

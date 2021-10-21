@@ -125,7 +125,7 @@ function UserPreferences() {
 
     const GenerateButton = () => {
         return (
-            <Button onClick={ GenerateButtonAction } variant="success">Generate!</Button>
+            <Button onClick={ GenerateButtonAction } variant="success">Generate?!</Button>
         );
     }
 

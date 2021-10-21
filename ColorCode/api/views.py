@@ -1,12 +1,14 @@
 from django.shortcuts import redirect
 from rest_framework import generics, status
-from rest_framework.serializers import Serializer 
-from rest_framework.views import APIView 
-from rest_framework.response import Response 
-from .serializers import UserPreferencesSerializer, UpdateUserPreferencesSerializer
-from .models import UserPreferences
+from rest_framework.serializers import Serializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserPreferencesSerializer, UpdateUserPreferencesSerializer, PaletteSerializer, UpdatePaletteSerializer
+from .models import UserPreferences, PaletteModel
+from .generator import colorPalette
 
 # Create your views here.
+
 
 class PaletteView(APIView):
     update_serializer_class = UpdateUserPreferencesSerializer
@@ -17,7 +19,52 @@ class PaletteView(APIView):
         # If a session exists for user, run palette generation
         if self.request.session.exists(user):
             # TODO return generation results
-            return Response({'TODO': 'THIS IS WHERE WE RETURN GENERATION RESULTS'}, status=status.HTTP_200_OK)
+
+            # get data from request and convert it into something that can be used (serialize it)
+            serializer = self.update_serializer_class(data=request.data)
+
+            # check if what they want is valid
+
+            if serializer.is_valid():
+                light_dark = serializer.data.get('light_dark')
+                neon_pastel = serializer.data.get('neon_pastel')
+                one_many_hues = serializer.data.get('one_many_hues')
+                bold_subtle = serializer.data.get('bold_subtle')
+                num_colors = serializer.data.get('num_colors')
+                main_color = serializer.data.get('main_color')
+                user = self.request.session.session_key
+
+                # make the user preferences dictionary for generator.py
+                pref_dict = {
+                    "id": user,
+                    "hue": main_color,
+                    "pastel": neon_pastel,
+                    "dark": light_dark,
+                    "subtle": bold_subtle,
+                    "many_hues": one_many_hues,
+                    "ccount": num_colors
+                }
+
+                # THIS GENERATES THE PALETTE! see generator.py for details on the colorPalette class.
+                # i think i may have made us a second database to hold it. sorry if that wasnt intended!
+                userPalette = colorPalette(pref_dict)
+
+                palettequeryset = PaletteModel.objects.filter(user=user)
+                if palettequeryset.exists():
+                    preferences = palettequeryset[0]
+                    preferences.base_color = colorPalette.getBaseColor()
+                    preferences.palette_list = colorPalette.getJsonPalettes()
+                    # Save to db
+                    preferences.save(
+                        update_fields=['base_color', 'palette_list'])
+                    # return updated preferences + ok
+                    return Response(PaletteSerializer(preferences).data, status=status.HTTP_200_OK)
+                else:
+                    preferences = PaletteModel(user=user, base_color=colorPalette.getBaseColor(
+                    ), palette_list=colorPalette.getJsonPalettes())
+                    preferences.save()
+                    return Response(PaletteSerializer(preferences).data, status=status.HTTP_201_CREATED)
+        # request not valid, return error
         return Response({'Bad Request': 'User Session does not exist, route to home'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -50,10 +97,10 @@ class PreferencesView(APIView):
         # If a session does not exist for user, create one
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        
+
         # get data from request and convert it into something that can be used (serialize it)
         serializer = self.update_serializer_class(data=request.data)
-        
+
         # check if what they want is valid
         if serializer.is_valid():
             light_dark = serializer.data.get('light_dark')
@@ -70,21 +117,21 @@ class PreferencesView(APIView):
             # else create a new db entry
             if queryset.exists():
                 preferences = queryset[0]
-                preferences.light_dark = light_dark 
+                preferences.light_dark = light_dark
                 preferences.neon_pastel = neon_pastel
                 preferences.one_many_hues = one_many_hues
                 preferences.bold_subtle = bold_subtle
                 preferences.num_colors = num_colors
                 preferences.main_color = main_color
                 # Save to db
-                preferences.save(update_fields=['light_dark', 'neon_pastel', 'one_many_hues', 
+                preferences.save(update_fields=['light_dark', 'neon_pastel', 'one_many_hues',
                                                 'bold_subtle', 'num_colors', 'main_color'])
                 # Return updated preferences and ok
                 return Response(UserPreferencesSerializer(preferences).data, status=status.HTTP_200_OK)
             else:
                 preferences = UserPreferences(user=user, light_dark=light_dark, neon_pastel=neon_pastel,
-                                            one_many_hues=one_many_hues, bold_subtle=bold_subtle, 
-                                            num_colors=num_colors, main_color=main_color)
+                                              one_many_hues=one_many_hues, bold_subtle=bold_subtle,
+                                              num_colors=num_colors, main_color=main_color)
                 preferences.save()
                 return Response(UserPreferencesSerializer(preferences).data, status=status.HTTP_201_CREATED)
 

@@ -4,14 +4,25 @@ import husl  # pip install husl
 
 # import { hsvaToHsla } from '@uiw/color-convert' # npm i @uiw/color-convert
 
-# NTS RE: USER_PREFERENCES
+# NOTE RE: USER_PREFERENCES
 # user_preferences  should be in dict format.
 # relevant values: "hue" int/float, "pastel" bool, "dark" bool, "many_hues" bool, "ccount" int
+
+# TO USE:
+# THE COLOR PALETTE IS AUTOMATICALLY GENERATED FROM USER_PREFERENCES ON INITIALIZATION
+# WARNING: THIS GENERATOR ASSUMES THAT ALL INPUTS ARE IN THE CORRECT FORMAT! SEE NOTE ABOVE
+# THERE ARE GETTERS FOR THE COLOR PALETTE AND BASE COLOR. USE THEM!
+
+# 21-OCT-2021: currently generates a base color + grabs the relevant palette from thecolorapi.com.
+# does not yet edit the palette colors for contrast
+
+# TODO: include bold/subtle in the palette editing phase i.e. high/low value contrast levels
 
 
 class colorPalette:
     def __init__(self, user_preferences):  # userprefs should be in dict format
-        self.baseColor = "0047AB"  # hex value
+        # DEFINE VARIABLES:
+        self.baseColor = "0047AB"  # default hex value, just in case
         self.colorList = []  # list of hex elements to be filled
         self.userPrefs = user_preferences
 
@@ -94,3 +105,6 @@ class colorPalette:
 
     def getBaseColor(self):
         return self.baseColor
+
+    def getJsonPalettes(self):
+        return json.dumps(self.colorList)
