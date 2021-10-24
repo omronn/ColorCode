@@ -8,8 +8,6 @@ from .serializers import UserPreferencesSerializer, UpdateUserPreferencesSeriali
 from .models import UserPreferences, PaletteModel
 from .generator import colorPalette
 
-# Create your views here.
-
 
 class PaletteView(APIView):
     update_serializer_class = UpdateUserPreferencesSerializer
