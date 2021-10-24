@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from rest_framework import generics, status
+from rest_framework import serializers
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,30 +21,14 @@ class PaletteView(APIView):
         if self.request.session.exists(user):
             # TODO return generation results
 
-            # get data from request and convert it into something that can be used (serialize it)
-            serializer = self.update_serializer_class(data=request.data)
+            queryset = UserPreferences.objects.filter(user=user)
 
-            # check if what they want is valid
+            # check that what we need exists
+            if queryset.exists():
 
-            if serializer.is_valid():
-                light_dark = serializer.data.get('light_dark')
-                neon_pastel = serializer.data.get('neon_pastel')
-                one_many_hues = serializer.data.get('one_many_hues')
-                bold_subtle = serializer.data.get('bold_subtle')
-                num_colors = serializer.data.get('num_colors')
-                main_color = serializer.data.get('main_color')
-                user = self.request.session.session_key
-
-                # make the user preferences dictionary for generator.py
-                pref_dict = {
-                    "id": user,
-                    "hue": main_color,
-                    "pastel": neon_pastel,
-                    "dark": light_dark,
-                    "subtle": bold_subtle,
-                    "many_hues": one_many_hues,
-                    "ccount": num_colors
-                }
+                # get user preferences data from request and convert it into something that can be used (serialize it)
+                preferences = queryset[0]
+                pref_dict = UserPreferencesSerializer(preferences).data
 
                 # THIS GENERATES THE PALETTE! see generator.py for details on the colorPalette class.
                 # i think i may have made us a second database to hold it. sorry if that wasnt intended!
@@ -52,16 +37,16 @@ class PaletteView(APIView):
                 palettequeryset = PaletteModel.objects.filter(user=user)
                 if palettequeryset.exists():
                     preferences = palettequeryset[0]
-                    preferences.base_color = colorPalette.getBaseColor()
-                    preferences.palette_list = colorPalette.getJsonPalettes()
+                    preferences.base_color = userPalette.getBaseColor()
+                    preferences.palette_list = userPalette.getJsonPalettes()
                     # Save to db
                     preferences.save(
                         update_fields=['base_color', 'palette_list'])
                     # return updated preferences + ok
                     return Response(PaletteSerializer(preferences).data, status=status.HTTP_200_OK)
                 else:
-                    preferences = PaletteModel(user=user, base_color=colorPalette.getBaseColor(
-                    ), palette_list=colorPalette.getJsonPalettes())
+                    preferences = PaletteModel(
+                        user=user, base_color=userPalette.getBaseColor(), palette_list=userPalette.getJsonPalettes())
                     preferences.save()
                     return Response(PaletteSerializer(preferences).data, status=status.HTTP_201_CREATED)
         # request not valid, return error

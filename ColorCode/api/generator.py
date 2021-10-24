@@ -1,12 +1,11 @@
-import requests  # pip install requests
 import json
-import husl  # pip install husl
-
-# import { hsvaToHsla } from '@uiw/color-convert' # npm i @uiw/color-convert
+import colorutils  # pip install colorutils
+import requests  # pip install requests
+from colorutils import Color
 
 # NOTE RE: USER_PREFERENCES
 # user_preferences  should be in dict format.
-# relevant values: "hue" int/float, "pastel" bool, "dark" bool, "many_hues" bool, "ccount" int
+# relevant values: "main_color" int/float, "neon_pastel" bool, "light_dark" bool, "one_many_hues" bool, "num_colors" int
 
 # TO USE:
 # THE COLOR PALETTE IS AUTOMATICALLY GENERATED FROM USER_PREFERENCES ON INITIALIZATION
@@ -22,7 +21,7 @@ import husl  # pip install husl
 class colorPalette:
     def __init__(self, user_preferences):  # userprefs should be in dict format
         # DEFINE VARIABLES:
-        self.baseColor = "0047AB"  # default hex value, just in case
+        self.baseColor = Color(hex="0047AB")
         self.colorList = []  # list of hex elements to be filled
         self.userPrefs = user_preferences
 
@@ -34,52 +33,65 @@ class colorPalette:
     # step 1: from user inputs, generate base color
 
     def createBaseColor(self):
-        hslValue = [0.0, 0.0, 0.0]
+        hsvValue = [0, 0, 0]
 
-        hslValue[0] = self.userPrefs["hue"]  # whatever main_color hue is
+        # whatever main_color hue is
+        hsvValue[0] = self.userPrefs["main_color"]
 
         # if pastel preference is true
-        if self.userPrefs["pastel"] == True:
-            hslValue[1] = 40
+        if self.userPrefs["neon_pastel"] == True:
+            hsvValue[1] = .40
         else:
-            hslValue[1] = 95
+            hsvValue[1] = .95
 
         # if dark mode preference is true
-        if self.userPrefs["dark"] == True:
-            hslValue[2] = 40
+        if self.userPrefs["light_dark"] == True:
+            hsvValue[2] = .40
         else:
-            hslValue[2] = 75
+            hsvValue[2] = .75
 
-        self.baseColor = husl.husl_to_hex(
-            hslValue[0], hslValue[1], hslValue[2])
-        self.colorList.append(self.baseColor)
+        self.baseColor = colorutils.Color(
+            hsv=(hsvValue[0], hsvValue[1], hsvValue[2]))
+        # husl.husl_to_hex(
+        #    hsvValue[0], hsvValue[1], hsvValue[2])
+        self.colorList.append(self.baseColor.hex[1:])
         return
 
     # step 2: from base color + user inputs, api color palette
 
     def api_TCA_call(self):
         url = "https://www.thecolorapi.com/scheme?hex="
-        url += self.baseColor  # baseColor hex
+        url += self.colorList[0]  # baseColor hex
         url += "&format=json&mode="
         # choose appropriate palette type based on user preferences. HC'd to analogic atm
 
         # if many hues is true
-        if self.userPrefs["many_hues"] == True:
+        if self.userPrefs["one_many_hues"] == True:
             url += "analogic-complement"
         else:
             url += "analogic"
 
-        colorCount = self.userPrefs["ccount"] - 1
-        url += "&count=" + colorCount  # replace '6' with user preference num_colors - 1
+        colorCount = self.userPrefs["num_colors"] - 1
+        if colorCount == 0:
+            print("no palette. break")
+            return
 
-        jsonReq = requests.get(url)
-        jsonLoad = json.load(jsonReq)
+        # replace '6' with user preference num_colors - 1
+        url += "&count=" + str(colorCount)
+
+        jsonResp = requests.get(url)
+
+        jsonLoad = jsonResp.json()
+
+        # print("jsonLoad ", jsonLoad)
 
         for color in jsonLoad["colors"]:
             self.colorList.append(color["hex"]["clean"])
 
         # TODO: possibly futz with analogic-complement to get more of the original value in there?
         # colorList should now be a list of hex codes
+
+        print(self.colorList)
 
         return
 
@@ -91,10 +103,10 @@ class colorPalette:
         # TCA generally more or less returns palettes in order from darkest to lightest color
 
         # if light mode is selected
-        if self.userPrefs["dark"] == False:
+        if self.userPrefs["light_dark"] == False:
             # as a starting point, let's just flip the colors for light mode
             # WITH THE EXCEPTION of the original color
-            self.colorList[1:] = self.colorList[1:].reverse()
+            self.colorList[1:].reverse()
 
     #####################################
     ### functions for returning stuff ###
@@ -104,7 +116,10 @@ class colorPalette:
         return self.colorList
 
     def getBaseColor(self):
-        return self.baseColor
+        return self.baseColor.hex[1:]
+
+    def getBaseColorHSV(self):
+        return self.baseColor.hsv
 
     def getJsonPalettes(self):
         return json.dumps(self.colorList)

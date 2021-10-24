@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
+
 
 function Palette() {
     // TODO Declare Palette vars and setters with useState
@@ -19,13 +21,15 @@ function Palette() {
             }
         ).then(
             (data) => {
-                
+                console.log("Palette fetched:")
                 console.log(data) // for testing purposes
                 setBaseColor(data.base_color)
                 setJsonList(data.palette_list)
 
             }
         ).catch((error) => {
+            console.log('error')
+            console.log(error)
             console.log('routing to preferences')
             const s = window.location.href;
             const stuff = s.substring(0, s.lastIndexOf('/'));
