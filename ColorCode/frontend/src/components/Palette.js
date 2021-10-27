@@ -38,19 +38,45 @@ function Palette() {
             console.log("error");
             console.log(error);
             console.log("routing to preferences");
-            const s = window.location.href;
-            const stuff = s.substring(0, s.lastIndexOf('/'));
-            window.location.replace(stuff);
+            let history = useHistory();
+            history.push('/');
         });
     }
+    // NOTE: Needs to remain above ColorList and other functions that utilize 
+    // The colorJsonList/baseColor items
+    useEffect(FetchPalette, []);  // KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
 
     const BackButton = () => {
+        let history = useHistory();
         return (
             <Button onClick={() => {
-                const s = window.location.href;
-                const stuff = s.substring(0, s.lastIndexOf('/'));
-                window.location.replace(stuff);
+                history.push('/');
             }} variant="success">Back</Button>
+        );
+    }
+
+    const ExportButton = () => {
+        const ExportButtonClick = () => {
+            let link = document.createElement('a');
+            link.download = 'Palette.txt'
+
+            const color_list = []
+            for (const [index, value] of colorJsonList.entries()) {
+                color_list.push('#' + value);
+            }
+
+            const color_string = color_list.toString().split(',').join('\n');
+
+            let blob = new Blob([color_string], { type: 'text/plain' });
+
+            link.href = URL.createObjectURL(blob);
+
+            link.click();
+
+            URL.revokeObjectURL(link.href);
+        }
+        return (
+            <Button onClick={ExportButtonClick} variant="success">Export!</Button>
         );
     }
 
@@ -99,25 +125,40 @@ function Palette() {
         );
     }
 
-    // ACTUALLY RUNS WHEN COMPONENT RENDERS
     
-    // Uncomment once Palette backend works 
-    useEffect(FetchPalette, []);  // KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
+    const ColorList = () => {
+        const color_list = []
+        for (const [index, value] of colorJsonList.entries()) {
+            color_list.push(
+                <Container className="sm p-1 my-1 text-white text-center align-self-center" style={{ backgroundColor: '#' + value }}>Color: #{value}</Container>
+            );
+        }
 
-    const color_list = []
-    for (const [index, value] of colorJsonList.entries()) {
-        color_list.push(
-            <Container className="md p-1 my-1 text-white text-center align-self-center" style={{ backgroundColor: '#' + value }}>Color: #{value}</Container>
+        return (
+            <Container className="sm p-1 my-1 text-white text-center align-self-center">
+                {color_list}
+            </Container>
         );
     }
 
+
+
+    // ACTUALLY RUNS WHEN COMPONENT RENDERS
     return (
-        <Container fluid className="vh-100 p-5 bg-dark text-white text-center">
+        <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1> Example Color Usage:</h1>
             <FakeSite />
             <h1>THE PALETTE:</h1>
-            {color_list}
-            <BackButton />
+            <ColorList />
+            <Row className="p-1 justify-content-center">
+                <Col md="auto">  
+                    <BackButton />
+                </Col>
+                <Col md="auto">  
+                    <ExportButton />
+                </Col>
+            </Row>
+            
         </Container>
     );
 }

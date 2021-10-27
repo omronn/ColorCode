@@ -134,7 +134,7 @@ function UserPreferences() {
 
     // TODO Not sure why oneManyHues is getting sent as true.  
     return (
-        <Container fluid className="vh-100 p-5 bg-dark text-white text-center">
+        <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1>I Want...</h1>
             <Preferences />
             <GenerateButton />
