@@ -46,54 +46,30 @@ function UserPreferences() {
             <Container fluid className="p-3 my-3 bg-secondary align-self-center">
                 <Form className="my-auto">
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
-                            Light
-                        </Col>
-                        <Col md="auto" className="align-self-center">
-                            <Switch onChange={() => { setLightDark(!lightDark); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
-                        </Col>
-                        <Col md="auto" className="align-self-center"> 
-                            Dark
+                        <Col md="auto">
+                            Light <Switch onChange={() => { setLightDark(!lightDark); } } checked={lightDark}/> Dark
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
-                            Neon
-                        </Col>
-                        <Col md="auto" className="my-auto">
-                            <Switch onChange={() => { setNeonPastel(!neonPastel); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col md="auto" className="align-self-center"> 
-                            Pastel
+                        <Col md="auto">
+                            Neon <Switch onChange={() => { setNeonPastel(!neonPastel); } } checked={neonPastel}/> Pastel
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
-                            One Color
-                        </Col>
-                        <Col md="auto" className="my-auto">
-                            <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col md="auto" className="align-self-center"> 
-                            Many Colors
-                        </Col>
+                        <Col md="auto">
+                            One Hue <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues}/> Many Hues
+                        </Col> 
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
-                            Bold
-                        </Col>
-                        <Col md="auto" className="my-auto">
-                            <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col md="auto" className="align-self-center"> 
-                            Subtle
+                        <Col md="auto">
+                            Bold <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle}/> Subtle
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
                         Number of Colors: {numColors}
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col lg="auto" className="my-auto">
+                        <Col lg="auto">
                             <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='10' step='1'/>
                         </Col>
                     </Row>
@@ -101,7 +77,7 @@ function UserPreferences() {
                         Main Color: {mainColor}. HuePicker will be what we use for this, but it gives colors in rgb format. Will have to change model or modify that.
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col lg="auto" className="my-auto">
+                        <Col lg="auto">
                             <Form.Range value={mainColor} onChange={(e) => { setMainColor(e.target.value); }} min='0' max='360' step='1'/>
                         </Col>
                     </Row>
@@ -156,6 +132,7 @@ function UserPreferences() {
     // Fetches preferences once, upon page load
     useEffect(FetchPreferences, []);
 
+    // TODO Not sure why oneManyHues is getting sent as true.  
     return (
         <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1>I Want...</h1>

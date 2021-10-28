@@ -10,8 +10,6 @@ function Palette() {
     // TODO Declare Palette vars and setters with useState
     const [baseColor, setBaseColor] = useState("000000");
     const [colorJsonList, setJsonList] = useState([]);
-    const history = useHistory();
-
 
     const FetchPalette = () => {
         // Get preferences (new or old) and save the state
@@ -40,7 +38,8 @@ function Palette() {
             console.log("error");
             console.log(error);
             console.log("routing to preferences");
-            window.location.replace("/");
+            let history = useHistory();
+            history.push('/');
         });
     }
     // NOTE: Needs to remain above ColorList and other functions that utilize 
@@ -48,6 +47,7 @@ function Palette() {
     useEffect(FetchPalette, []);  // KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
 
     const BackButton = () => {
+        let history = useHistory();
         return (
             <Button onClick={() => {
                 history.push('/');

@@ -3,6 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here. Effectively DB Schema
 
+
 class UserPreferences(models.Model):
     # This will be the users session key
     user = models.CharField(max_length=100, unique=True)
@@ -24,10 +25,9 @@ class UserPreferences(models.Model):
                                          360), MinValueValidator(0)]
                                      )
 
+
 class PaletteModel(models.Model):
-    #user = models.ForeignKey(UserPreferences, on_delete=models.CASCADE)
-    user = models.CharField(max_length=100, unique=True)
+    user = models.CharField(max_length=100, unique=True)  # same as above
     base_color = models.CharField(max_length=6)  # THE BASE COLOR: hexadecimal
+    # JSON-serialized (text) version of list
     palette_list = models.TextField(max_length=150)
-
-
