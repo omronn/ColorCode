@@ -84,7 +84,7 @@ function Palette() {
         // TODO: edit this html based on the number of colors included.
 
         return (
-            <Container className="palette_box">
+            <Container className="palette-box">
                 
                 <Row className="fake-header">
                     <Col sm>
