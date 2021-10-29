@@ -7,7 +7,6 @@ import Col from "react-bootstrap/Col";
 //import '../static/index.css';
 
 function Palette() {
-    // TODO Declare Palette vars and setters with useState
     const [baseColor, setBaseColor] = useState("000000");
     const [colorJsonList, setJsonList] = useState([]);
     const history = useHistory();
