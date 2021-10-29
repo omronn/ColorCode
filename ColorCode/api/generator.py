@@ -27,8 +27,10 @@ class colorPalette:
 
         # now Do The Things!
         self.createBaseColor()
-        self.api_TCA_call()
-        self.paletteSort()
+        # if there's only one color, don't bother
+        if self.userPrefs["num_colors"] > 1:
+            self.api_TCA_call()
+            self.paletteSort()
 
     # step 1: from user inputs, generate base color
 
@@ -72,9 +74,14 @@ class colorPalette:
             url += "analogic"
 
         colorCount = self.userPrefs["num_colors"] - 1
+        TCA_Error = False
         if colorCount == 0:
-            print("no palette. break")
+            print("error: no palette. break")
             return
+        if colorCount == 1:
+            # TCA's api returns more than 1 color if you query for one
+            TCA_Error = True
+            colorCount = 2
 
         # replace '6' with user preference num_colors - 1
         url += "&count=" + str(colorCount)
@@ -85,8 +92,18 @@ class colorPalette:
 
         # print("jsonLoad ", jsonLoad)
 
-        for color in jsonLoad["colors"]:
+        if TCA_Error:
+            # TCA error: pull ONLY first color
+            color = jsonLoad["colors"][0]
+            if self.userPrefs["one_many_hues"] != True:
+                # analogic: pull 2nd color instead bc it looks better 8^)
+                color = jsonLoad["colors"][1]
             self.colorList.append(color["hex"]["clean"])
+
+        else:
+            # TCA generates a normal palette. behave normally
+            for color in jsonLoad["colors"]:
+                self.colorList.append(color["hex"]["clean"])
 
         # TODO: possibly futz with analogic-complement to get more of the original value in there?
         # colorList should now be a list of hex codes
