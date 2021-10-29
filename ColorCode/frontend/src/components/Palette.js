@@ -106,7 +106,7 @@ function Palette() {
                     </Col>
                     <Col></Col>
                 </Row>
-                <Row class="fake-body">
+                <Row className="fake-body">
                     <Col></Col>
                     <Col lg>
                         <div class="fake-secondary-window">This is a secondary window with additional info.</div>
@@ -114,7 +114,7 @@ function Palette() {
                     <Col></Col>
                 </Row>
 
-                <Row class="fake-header">
+                <Row className="fake-header">
                     <Col sm>
                     Footer. Socmed links. Copyright information
                     </Col>
