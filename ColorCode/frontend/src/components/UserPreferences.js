@@ -4,6 +4,8 @@ import Container from 'react-bootstrap/Container';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Switch from "react-switch";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import { HuePicker } from 'react-color';
 
 function UserPreferences() {
@@ -43,51 +45,66 @@ function UserPreferences() {
         return (
             <Container fluid className="p-3 my-3 bg-secondary align-self-center">
                 <Form className="my-auto">
-                    <table id="prefs">
-                        <tr>
-                            <td>Light</td>
-                            <td>
-                                <Switch onChange={() => { setLightDark(!lightDark); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/>
-                            </td>
-                            <td>Dark</td>
-                        </tr>
-                        <tr>
-                            <td>Neon</td>
-                            <td>
-                                <Switch onChange={() => { setNeonPastel(!neonPastel); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
-                            </td>
-                            <td>Pastel</td>
-                        </tr>
-                        <tr>
-                            <td>One Color</td>
-                            <td>
-                                <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
-                            </td>
-                            <td>Many Colors</td>
-                        </tr>
-                        <tr>
-                            <td>Bold</td>
-                            <td>
-                                <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
-                            </td>
-                            <td>Subtle</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='10' step='1'/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                Main Color: {mainColor} HuePicker will be what we use for this, but it gives colors in rgb format. Will have to change model or modify that.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <Form.Range value={mainColor} onChange={(e) => { setMainColor(e.target.value); }} min='0' max='360' step='1'/>
-                            </td>
-                        </tr>
-                    </table>
+                    <Row className="p-1 justify-content-center">
+                        <Col md="auto" className="align-self-center"> 
+                            Light
+                        </Col>
+                        <Col md="auto" className="align-self-center">
+                            <Switch onChange={() => { setLightDark(!lightDark); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
+                        </Col>
+                        <Col md="auto" className="align-self-center"> 
+                            Dark
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col md="auto" className="align-self-center"> 
+                            Neon
+                        </Col>
+                        <Col md="auto" className="my-auto">
+                            <Switch onChange={() => { setNeonPastel(!neonPastel); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
+                        </Col>
+                        <Col md="auto" className="align-self-center"> 
+                            Pastel
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col md="auto" className="align-self-center"> 
+                            One Color
+                        </Col>
+                        <Col md="auto" className="my-auto">
+                            <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
+                        </Col>
+                        <Col md="auto" className="align-self-center"> 
+                            Many Colors
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col md="auto" className="align-self-center"> 
+                            Bold
+                        </Col>
+                        <Col md="auto" className="my-auto">
+                            <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
+                        </Col>
+                        <Col md="auto" className="align-self-center"> 
+                            Subtle
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        Number of Colors: {numColors}
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col lg="auto" className="my-auto">
+                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='10' step='1'/>
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        Main Color: {mainColor}. HuePicker will be what we use for this, but it gives colors in rgb format. Will have to change model or modify that.
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col lg="auto" className="my-auto">
+                            <Form.Range value={mainColor} onChange={(e) => { setMainColor(e.target.value); }} min='0' max='360' step='1'/>
+                        </Col>
+                    </Row>
                 </Form>
             </Container>
         );
