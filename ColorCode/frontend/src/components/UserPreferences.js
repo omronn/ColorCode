@@ -46,46 +46,46 @@ function UserPreferences() {
             <Container fluid className="p-3 my-3 bg-secondary align-self-center">
                 <Form className="my-auto">
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Light
                         </Col>
-                        <Col md="auto" className="align-self-center">
+                        <Col xs="auto" className="align-self-center">
                             <Switch onChange={() => { setLightDark(!lightDark); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
                         </Col>
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Dark
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Neon
                         </Col>
-                        <Col md="auto" className="my-auto">
+                        <Col xs="auto" className="my-auto">
                             <Switch onChange={() => { setNeonPastel(!neonPastel); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
                         </Col>
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Pastel
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             One Color
                         </Col>
-                        <Col md="auto" className="my-auto">
+                        <Col xs="auto" className="my-auto">
                             <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
                         </Col>
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Many Colors
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Bold
                         </Col>
-                        <Col md="auto" className="my-auto">
+                        <Col xs="auto" className="my-auto">
                             <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
                         </Col>
-                        <Col md="auto" className="align-self-center"> 
+                        <Col xs="auto" className="align-self-center"> 
                             Subtle
                         </Col>
                     </Row>
@@ -93,7 +93,7 @@ function UserPreferences() {
                         Number of Colors: {numColors}
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col lg="auto" className="my-auto">
+                        <Col xs="auto" className="my-auto">
                             <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='6' step='1'/>
                         </Col>
                     </Row>
@@ -101,8 +101,8 @@ function UserPreferences() {
                         Main Color: {mainColor}
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col lg="auto" className="my-auto">
-                            <HuePicker
+                        <Col xs="auto" className="my-auto">
+                            <HuePicker className="justify-content-center"
                                 color={{ h: mainColor, s: 0, l: .10 }}
                                 onChangeComplete={(color) => { setMainColor(Math.round(color.hsl.h))}}
                             />
