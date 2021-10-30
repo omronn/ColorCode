@@ -94,17 +94,17 @@ function UserPreferences() {
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col lg="auto" className="my-auto">
-                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='10' step='1'/>
+                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='6' step='1'/>
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        Main Color: {mainColor}. HuePicker will be what we use for this, but it gives colors in rgb format. Will have to change model or modify that.
+                        Main Color: {mainColor}
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col lg="auto" className="my-auto">
                             <HuePicker
                                 color={{ h: mainColor, s: 0, l: .10 }}
-                                onChangeComplete={(color) => { setMainColor(color.hsl.h)}}
+                                onChangeComplete={(color) => { setMainColor(Math.round(color.hsl.h))}}
                             />
                         </Col>
                     </Row>
