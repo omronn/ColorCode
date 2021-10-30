@@ -63,37 +63,39 @@ function FakeSiteOne(props) {
     }, [props]);
 
     return (
-        <Container className="palette-box">
+        <Container className="palette-box" style={{backgroundColor: '#' + colors.at(1)}}>
+
+            {/* <div>color list: {colors.at(0)} , {colors.at(1)} , {colors.at(2)} , {colors.at(3)} , {colors.at(4)} , {colors.at(5)} , {colors.at(6)}</div> */}
             
-            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(5)}}>
-                <Col sm>
-                    Title: FakeSiteOne
+            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(4)}}>
+                <Col sm className="fake-title">
+                    Sample UI #1
                 </Col>
                 <Col>
-                    Nav buttons
+                    <div style={{textAlign: 'right'}}>Twitter || Facebook || LinkedIn</div>
                 </Col>
             </Row>
 
-            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(2)}}>
+            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(1)}}>
                 <Col></Col>
                 <Col lg>
-                    <div class="fake-main-window" style={{backgroundColor: '#' + colors.at(1)}}>
-                        <div class="fake-alert" style={{backgroundColor: '#' + colors.at(4)}}>Alert! Please note that...</div>
+                    <div class="fake-main-window" style={{backgroundColor: '#' + colors.at(0)}}>
+                        <div class="fake-alert" style={{backgroundColor: '#' + colors.at(3)}}>Alert! Please note that...</div>
                         <div>This is the text in a primary window! Information goes here.</div>
-                        <div class="fake-button" style={{backgroundColor: '#' + colors.at(3)}}>Click here!</div>
+                        <div class="fake-button" style={{backgroundColor: '#' + colors.at(2)}}>Click here!</div>
                     </div>
                 </Col>
                 <Col></Col>
             </Row>
-            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(2)}}>
+            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(1)}}>
                 <Col></Col>
                 <Col lg>
-                    <div class="fake-secondary-window" style={{backgroundColor: '#' + colors.at(6)}}>This is a secondary window with additional info.</div>
+                    <div class="fake-secondary-window" style={{backgroundColor: '#' + colors.at(5)}}>This is a secondary window with additional info.</div>
                 </Col>
                 <Col></Col>
             </Row>
 
-            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(5)}}>
+            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(4)}}>
                 <Col sm>
                 Footer. Socmed links. Copyright information
                 </Col>
