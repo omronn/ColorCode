@@ -102,7 +102,10 @@ function UserPreferences() {
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col lg="auto" className="my-auto">
-                            <Form.Range value={mainColor} onChange={(e) => { setMainColor(e.target.value); }} min='0' max='360' step='1'/>
+                            <HuePicker
+                                color={{ h: mainColor, s: 0, l: .10 }}
+                                onChangeComplete={(color) => { setMainColor(color.hsl.h)}}
+                            />
                         </Col>
                     </Row>
                 </Form>
