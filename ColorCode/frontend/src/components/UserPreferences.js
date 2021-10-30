@@ -78,9 +78,11 @@ function UserPreferences() {
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                Main Color: {mainColor} HuePicker will be what we use for this, but it gives colors in rgb format. Will have to change model or modify that.
+                            <td></td>
+                            <td>
+                                Main Color: {mainColor}
                             </td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td colspan="3">
