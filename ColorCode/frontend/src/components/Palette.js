@@ -4,15 +4,20 @@ import Container from 'react-bootstrap/Container';
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import FakeSite from './FakeSite';
 //import '../static/index.css';
 
 function Palette() {
     const [baseColor, setBaseColor] = useState("000000");
     const [colorJsonList, setJsonList] = useState([]);
+    // This is a constant that will change as we implement more fake websites to view
+    const [numFakeVersions, setNumFakeVersions] = useState(2);
+    const [fakeVersion, setFakeVersion] = useState(1);
     const history = useHistory();
 
-
-    const FetchPalette = () => {
+    // NOTE: Needs to remain above ColorList and other functions that utilize 
+    // The colorJsonList/baseColor items
+    useEffect(() => {
         // Get preferences (new or old) and save the state
         const requestOptions = {
             method: "GET",
@@ -32,8 +37,6 @@ function Palette() {
                 // Convert to usable list
                 setJsonList(JSON.parse(data.palette_list));
                 //assign colors to css classes
-
-                
             }
         ).catch((error) => {
             console.log("error");
@@ -41,10 +44,7 @@ function Palette() {
             console.log("routing to preferences");
             window.location.replace("/");
         });
-    }
-    // NOTE: Needs to remain above ColorList and other functions that utilize 
-    // The colorJsonList/baseColor items
-    useEffect(FetchPalette, []);  // KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
+    }, []);  // KEEPME, WILL USE ONCE FETCHPALETTE DATA DONE
 
     const BackButton = () => {
         return (
@@ -78,52 +78,6 @@ function Palette() {
             <Button onClick={ExportButtonClick} variant="success">Export!</Button>
         );
     }
-
-    const FakeSite = () => {
-        // TODO: edit this html based on the number of colors included.
-
-        return (
-            <Container className="palette-box">
-                
-                <Row className="fake-header">
-                    <Col sm>
-                        Title
-                    </Col>
-                    <Col>
-                        Nav buttons
-                    </Col>
-                </Row>
-
-                <Row className="fake-body">
-                    <Col></Col>
-                    <Col lg>
-                        <div class="fake-main-window">
-                            <div class="fake-alert">Alert! Please note that...</div>
-                            <div>This is the text in a primary window! Information goes here.</div>
-                            <div class="fake-button">Click here!</div>
-                        </div>
-                    </Col>
-                    <Col></Col>
-                </Row>
-                <Row className="fake-body">
-                    <Col></Col>
-                    <Col lg>
-                        <div class="fake-secondary-window">This is a secondary window with additional info.</div>
-                    </Col>
-                    <Col></Col>
-                </Row>
-
-                <Row className="fake-header">
-                    <Col sm>
-                    Footer. Socmed links. Copyright information
-                    </Col>
-                </Row>
-                
-            
-            </Container>
-        );
-    }
-
     
     const ColorList = () => {
         const color_list = []
@@ -140,13 +94,29 @@ function Palette() {
         );
     }
 
+    const FakeSiteVersions = () => {
+        const buttons = [];
+        for (let index = 1; index <= numFakeVersions; index++) {
+            buttons.push(
+                <Col xs="auto" className="align-self-center"> 
+                    <Button onClick={() => { setFakeVersion(index) }}> { index } </Button>
+                </Col>
+            );
+        }
+        return (
+            <Row className="p-1 justify-content-center">
+                {buttons}
+            </Row>
+        );
+    }
 
 
     // ACTUALLY RUNS WHEN COMPONENT RENDERS
     return (
         <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1> Example Color Usage:</h1>
-            <FakeSite />
+            <FakeSite colors={[...colorJsonList]} version={fakeVersion} />
+            <FakeSiteVersions />
             <h1>THE PALETTE:</h1>
             <ColorList />
             <Row className="p-1 justify-content-center">

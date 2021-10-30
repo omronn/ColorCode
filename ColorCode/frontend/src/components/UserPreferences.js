@@ -94,7 +94,7 @@ function UserPreferences() {
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col lg="auto" className="my-auto">
-                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='10' step='1'/>
+                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='6' step='1'/>
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
