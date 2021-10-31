@@ -120,10 +120,10 @@ function Palette() {
             <h1>THE PALETTE:</h1>
             <ColorList />
             <Row className="p-1 justify-content-center">
-                <Col md="auto">  
+                <Col xs="auto">  
                     <BackButton />
                 </Col>
-                <Col md="auto">  
+                <Col xs="auto">  
                     <ExportButton />
                 </Col>
             </Row>
