@@ -15,6 +15,10 @@ from colorutils import Color
 # 21-OCT-2021: currently generates a base color + grabs the relevant palette from thecolorapi.com.
 # does not yet edit the palette colors for contrast
 
+# 03-NOV-2021: added in a text color item. Has hex value "000000" (black) or "FFFFFF" (white).
+# In theory, text for the fake site will be black if darkmode preference is False, white if True.
+# I'm still working on it though...
+
 # TODO: include bold/subtle in the palette editing phase i.e. high/low value contrast levels
 
 
@@ -23,6 +27,7 @@ class colorPalette:
         # DEFINE VARIABLES:
         self.baseColor = Color(hex="0047AB")
         self.colorList = []  # list of hex elements to be filled
+        self.txtColor = Color(hex="000000")  # Text color for site
         self.userPrefs = user_preferences
 
         # now Do The Things!
@@ -49,8 +54,12 @@ class colorPalette:
         # if dark mode preference is true
         if self.userPrefs["light_dark"] == True:
             hsvValue[2] = .40
+            self.txtColor = colorutils.Color(hex="FFFFFF")
+            # print("tex color should be FFFFFF, is: ", self.txtColor.hex[1:])
         else:
             hsvValue[2] = .75
+            self.txtColor = colorutils.Color(hex="000000")
+            # print("tex color should be 000000, is: ", self.txtColor.hex[1:])
 
         self.baseColor = colorutils.Color(
             hsv=(hsvValue[0], hsvValue[1], hsvValue[2]))
@@ -140,3 +149,6 @@ class colorPalette:
 
     def getJsonPalettes(self):
         return json.dumps(self.colorList)
+    
+    def getTxtColor(self):
+        return self.txtColor.hex[1:]

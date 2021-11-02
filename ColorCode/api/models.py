@@ -28,6 +28,7 @@ class PaletteModel(models.Model):
     #user = models.ForeignKey(UserPreferences, on_delete=models.CASCADE)
     user = models.CharField(max_length=100, unique=True)
     base_color = models.CharField(max_length=6)  # THE BASE COLOR: hexadecimal
+    txt_color = models.CharField(max_length=6)  # the text color: hexadecimal
     palette_list = models.TextField(max_length=150)
 
 

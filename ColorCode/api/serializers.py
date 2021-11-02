@@ -19,10 +19,10 @@ class UpdateUserPreferencesSerializer(serializers.ModelSerializer):
 class PaletteSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaletteModel
-        fields = ('id', 'user', 'base_color', 'palette_list')
+        fields = ('id', 'user', 'base_color', 'palette_list', 'txt_color')
 
 
 class UpdatePaletteSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaletteModel
-        fields = ('base_color', 'palette_list')
+        fields = ('base_color', 'palette_list', 'txt_color')

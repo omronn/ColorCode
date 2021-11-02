@@ -37,14 +37,15 @@ class PaletteView(APIView):
                     preferences = palettequeryset[0]
                     preferences.base_color = userPalette.getBaseColor()
                     preferences.palette_list = userPalette.getJsonPalettes()
+                    preferences.txt_color = userPalette.getTxtColor()
                     # Save to db
                     preferences.save(
-                        update_fields=['base_color', 'palette_list'])
+                        update_fields=['base_color', 'palette_list', 'txt_color'])
                     # return updated preferences + ok
                     return Response(PaletteSerializer(preferences).data, status=status.HTTP_200_OK)
                 else:
                     preferences = PaletteModel(
-                        user=user, base_color=userPalette.getBaseColor(), palette_list=userPalette.getJsonPalettes())
+                        user=user, base_color=userPalette.getBaseColor(), palette_list=userPalette.getJsonPalettes(), txt_color=userPalette.getTxtColor())
                     preferences.save()
                     return Response(PaletteSerializer(preferences).data, status=status.HTTP_201_CREATED)
         # request not valid, return error
