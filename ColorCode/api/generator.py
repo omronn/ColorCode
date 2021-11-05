@@ -5,7 +5,7 @@ from colorutils import Color
 
 # NOTE RE: USER_PREFERENCES
 # user_preferences  should be in dict format.
-# relevant values: "main_color" int/float, "neon_pastel" bool, "light_dark" bool, "one_many_hues" bool, "num_colors" int
+# relevant values: "main_color" int/float, "neon_pastel" bool, "light_dark" bool, "one_many_hues" bool, "num_colors" int, "bold_subtle" bool
 
 # TO USE:
 # THE COLOR PALETTE IS AUTOMATICALLY GENERATED FROM USER_PREFERENCES ON INITIALIZATION
@@ -31,6 +31,7 @@ class colorPalette:
         if self.userPrefs["num_colors"] > 1:
             self.api_TCA_call()
             self.paletteSort()
+            self.paletteAdjust()
 
     # step 1: from user inputs, generate base color
 
@@ -124,6 +125,100 @@ class colorPalette:
             # as a starting point, let's just flip the colors for light mode
             # WITH THE EXCEPTION of the original color
             self.colorList[1:].reverse()
+
+    # step 4: now that colors are assigned, adjust colors for better contrast
+    def paletteAdjust(self):
+        # reminder to self: 1. main windows, 2. background 3. main buttons
+        # 4. alerts, 5. a header/footer, 6. secondary windows
+
+        # overall edits:
+        # increase alert saturation by .10, button saturation by .05
+        # decrease secondary window saturation by .05
+        if len(self.colorList) >= 3:
+            self.colorList[2] = self.adjustColor(self.colorList[2], 's', .05)
+        if len(self.colorList) >= 4:
+            self.colorList[3] = self.adjustColor(self.colorList[3], 's', .1)
+        if len(self.colorList) >= 6:
+            self.colorList[5] = self.adjustColor(self.colorList[5], 's', -.05)
+
+        # bold-subtle contrast
+        # TCA already gives incredibly little value variation so for subtle, i do nothing
+        if self.userPrefs["bold_subtle"] == False:
+            # for bold:
+            if self.userPrefs["light_dark"] == False:
+                # if light mode, increase the value of: bg +.10,
+                # decrease the value of: main window -.1, header/footer -.10, button -.15
+                if len(self.colorList) >= 1:
+                    self.colorList[0] = self.adjustColor(
+                        self.colorList[0], 'v', -.07)
+                if len(self.colorList) >= 2:
+                    self.colorList[1] = self.adjustColor(
+                        self.colorList[1], 'v', .1)
+                if len(self.colorList) >= 3:
+                    self.colorList[2] = self.adjustColor(
+                        self.colorList[2], 'v', -.15)
+                if len(self.colorList) >= 5:
+                    self.colorList[4] = self.adjustColor(
+                        self.colorList[4], 'v', -.1)
+            else:
+                # if dark mode, increase the value of: buttons +.05, alert +.05
+                # decrease the value of:bg -.10, main window -.05
+                if len(self.colorList) >= 1:
+                    self.colorList[0] = self.adjustColor(
+                        self.colorList[0], 'v', -.05)
+                if len(self.colorList) >= 2:
+                    self.colorList[1] = self.adjustColor(
+                        self.colorList[1], 'v', -.1)
+                if len(self.colorList) >= 3:
+                    self.colorList[2] = self.adjustColor(
+                        self.colorList[2], 'v', .05)
+                if len(self.colorList) >= 4:
+                    self.colorList[3] = self.adjustColor(
+                        self.colorList[3], 'v', .05)
+
+    # CALL THIS FUNCTION IN ORDER TO ADJUST A COLOR HEX
+    # THIS WILL RETURN THE ADJUSTED COLOR HEX, NO HASH
+    # colorHex should be the hex, no hashtag
+    # thingToAdjust should be either: 'h', 's', or 'v'
+    # AdjustBy should be negative if wanting to decrement
+    def adjustColor(self, colorHex, thingToAdjust, AdjustBy):
+        startColor = Color(hex=colorHex)
+        fixColorHsvTuple = startColor.hsv
+        # make it a list so we can edit it
+        fixColorHsv = [fixColorHsvTuple[0],
+                       fixColorHsvTuple[1], fixColorHsvTuple[2]]
+
+        if thingToAdjust == 'h':
+            fixColorHsv[0] += AdjustBy
+
+            # overflow edge cases
+            if fixColorHsv[0] > 359:
+                fixColorHsv[0] -= 360
+            elif fixColorHsv[0] < 0:
+                fixColorHsv[0] += 360
+
+        elif thingToAdjust == 's':
+            fixColorHsv[1] += AdjustBy
+
+            # avoid edge cases
+            if fixColorHsv[1] > 1:
+                fixColorHsv[1] = 1
+            elif fixColorHsv[1] < 0:
+                fixColorHsv[1] = 0
+
+        else:
+            fixColorHsv[2] += AdjustBy
+
+            # avoid edge cases
+            if fixColorHsv[2] > 1:
+                fixColorHsv[2] = 1
+            elif fixColorHsv[2] < 0:
+                fixColorHsv[2] = 0
+
+        newColor = colorutils.Color(
+            hsv=(fixColorHsv[0], fixColorHsv[1], fixColorHsv[2]))
+        # print("DOUGDEBUG", fixColorHsvTuple, fixColorHsv, newColor.hex[1:])
+        return newColor.hex[1:]
 
     #####################################
     ### functions for returning stuff ###
