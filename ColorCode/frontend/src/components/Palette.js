@@ -10,14 +10,13 @@ import FakeSite from './FakeSite';
 function Palette() {
     const [baseColor, setBaseColor] = useState("000000");
     const [colorJsonList, setJsonList] = useState([]);
-    const [txtColor, setTxtColor] = useState("000000");
     // This is a constant that will change as we implement more fake websites to view
     const [numFakeVersions, setNumFakeVersions] = useState(2);
     const [fakeVersion, setFakeVersion] = useState(1);
     const history = useHistory();
 
     // NOTE: Needs to remain above ColorList and other functions that utilize 
-    // The colorJsonList/baseColor/txtColor items
+    // The colorJsonList/baseColor items
     useEffect(() => {
         // Get preferences (new or old) and save the state
         const requestOptions = {
@@ -35,7 +34,6 @@ function Palette() {
                 console.log("Palette fetched:");
                 console.log(data); // for testing purposes
                 setBaseColor(data.base_color);
-                setTxtColor(data.txt_color);
                 // Convert to usable list
                 setJsonList(JSON.parse(data.palette_list));
                 //assign colors to css classes
@@ -85,12 +83,12 @@ function Palette() {
         const color_list = []
         for (const [index, value] of colorJsonList.entries()) {
             color_list.push(
-                <Container className="sm p-1 my-1 text-center align-self-center" style={{ backgroundColor: '#' + value, color: '#' + txtColor }}>Color: #{value}</Container>
+                <Container className="sm p-1 my-1 text-white text-center align-self-center" style={{ backgroundColor: '#' + value }}>Color: #{value}</Container>
             );
         }
 
         return (
-            <Container className="sm p-1 my-1 text-center align-self-center">
+            <Container className="sm p-1 my-1 text-white text-center align-self-center">
                 {color_list}
             </Container>
         );
@@ -117,7 +115,7 @@ function Palette() {
     return (
         <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1> Example Color Usage:</h1>
-            <FakeSite colors={[...colorJsonList]} txt={txtColor} version={fakeVersion} />
+            <FakeSite colors={[...colorJsonList]} version={fakeVersion} />
             <FakeSiteVersions />
             <h1>THE PALETTE:</h1>
             <ColorList />
