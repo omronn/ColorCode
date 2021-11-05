@@ -69,13 +69,13 @@ function UserPreferences() {
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="align-self-center"> 
-                            One Color
+                            Monochrome
                         </Col>
                         <Col xs="auto" className="my-auto">
                             <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
                         </Col>
                         <Col xs="auto" className="align-self-center"> 
-                            Many Colors
+                            Multiple Colors
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 // Main function that routes to the correct fake site
 function FakeSite(props) {
@@ -56,6 +59,7 @@ function FakeSiteOne(props) {
     // First render
     useEffect(() => {
         setColors(props.colors);
+        console.log(props.colors);
     }, []);
     // Update local state anytime props changes (palette changes)
     useEffect(() => {
@@ -82,7 +86,7 @@ function FakeSiteOne(props) {
                     <div class="fake-main-window" style={{backgroundColor: '#' + colors.at(0)}}>
                         <div class="fake-alert" style={{backgroundColor: '#' + colors.at(3)}}>Alert! Please note that...</div>
                         <div>This is the text in a primary window! Information goes here.</div>
-                        <div class="fake-button" style={{backgroundColor: '#' + colors.at(2)}}>Click here!</div>
+                        <div class="fake-button" style={{backgroundColor: '#' + colors.at(2)}}>Button!</div>
                     </div>
                 </Col>
                 <Col></Col>
@@ -106,53 +110,40 @@ function FakeSiteOne(props) {
 
 function FakeSiteTwo(props) {
     // TODO: edit this html based on the number of colors included.
-    const [colors, setColors] = useState([]);
-    const [numColors, setNumColors] = useState(6);
+    const [colors, setColors] = useState(props.colors);
 
+    // First render
+    useEffect(() => {
+        setColors(props.colors);
+        console.log(props.colors);
+    }, []);
     // Update local state anytime props changes (palette changes)
     useEffect(() => {
         setColors(props.colors);
     }, [props]);
 
     return (
-        <Container className="palette-box">
-            
-            <Row className="fake-header">
-                <Col sm>
-                    Title: FakeSiteTwo
-                </Col>
-                <Col>
-                    Nav buttons
-                </Col>
-            </Row>
-
-            <Row className="fake-body">
-                <Col></Col>
-                <Col lg>
-                    <div class="fake-main-window">
-                        <div class="fake-alert">Alert! Please note that...</div>
-                        <div>This is the text in a primary window! Information goes here.</div>
-                        <div class="fake-button">Click here!</div>
-                    </div>
-                </Col>
-                <Col></Col>
-            </Row>
-            <Row className="fake-body">
-                <Col></Col>
-                <Col lg>
-                    <div class="fake-secondary-window">This is a secondary window with additional info.</div>
-                </Col>
-                <Col></Col>
-            </Row>
-
-            <Row className="fake-header">
-                <Col sm>
-                Footer. Socmed links. Copyright information
-                </Col>
-            </Row>
-            
-        
-        </Container>
+        <Container>
+            <Navbar expand="lg" style={{backgroundColor: '#' + colors.at(0)}}>
+            <Container>
+                <Navbar.Brand>Navigation Bar: Click to Dropdown</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                    <Nav.Link style={{backgroundColor: '#' + colors.at(1)}}>Home (Have at least 2 colors in your palette to alternate colors)</Nav.Link>
+                    <Nav.Link style={{backgroundColor: '#' + colors.at(0)}}>Link</Nav.Link>
+                    <NavDropdown title="Dropdown" id="basic-nav-dropdown" style={{backgroundColor: '#' + colors.at(1)}}>
+                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(0)}}>Action</NavDropdown.Item>
+                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(1)}}>Another action</NavDropdown.Item>
+                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(0)}}> Something</NavDropdown.Item>
+                    <NavDropdown.Divider style={{backgroundColor: '#' + colors.at(0)}}/>
+                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(1)}}>Separated link</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                </Navbar.Collapse>
+            </Container>
+            </Navbar>
+    </Container>
     );
 }
 
