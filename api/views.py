@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from .serializers import UserPreferencesSerializer, UpdateUserPreferencesSerializer, PaletteSerializer, UpdatePaletteSerializer
 from .models import UserPreferences, PaletteModel
 from .generator import colorPalette
-# Test
 
 class PaletteView(APIView):
     update_serializer_class = UpdateUserPreferencesSerializer
