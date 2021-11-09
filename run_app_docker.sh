@@ -1,9 +1,13 @@
 #!/bin/bash
-# This should be executed in powershell on windows
-# If you're on mac, you may have different commands, I don't mac
-# Requires you to have docker-compose installed and Docker set up
-# Simply run this executable with ./run_app_docker.sh
-# Or you can put in the commands by hand (I know, two whole commands. Ambitious)
+
+# TO RUN COLORCODE on Windows:
+# Prereq: Have docker-compose installed
+# 1) Open windows powershell
+# 2) cd to the directory that contains this file
+# 3) run "./run_app_docker.sh"
+# 4) visit localhost:8000, enjoy!
+# 5) Once done, run "docker-compose down" in the directory that contains this file
+# 6) All Done!
 
 # build image
 docker-compose build 
