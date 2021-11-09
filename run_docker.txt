@@ -1,6 +1,0 @@
-To build and run docker in powershell
-
-docker-compose build (builds image)
-docker-compose up -d (starts app)
-access and localhost:8000
-docker-compose down (shuts down app)
