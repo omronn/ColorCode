@@ -24,9 +24,21 @@ class colorPalette:
         self.baseColor = Color(hex="0047AB")
         self.colorList = []  # list of hex elements to be filled
         self.userPrefs = user_preferences
+        # TODO this will be a user_preferences variable once i get hex codes running
+        self.customHex = False
+        self.ValueAdjustmentLists = [
+            [0, .20, -.12, .1, -.15, .1],  # light/bold
+            [0, .17, -.08, .07, -.1, .07],  # light/subtle
+            [0, -.1, .12, .15, .07, .07],  # dark/bold
+            [0, -.05, .1, .1, .05, .05]  # dark/subtle
+        ]
 
-        # now Do The Things!
-        self.createBaseColor()
+        # base color setup
+        if self.customHex == True:
+            self.assignBaseColor()
+        else:
+            self.createBaseColor()
+
         # if there's only one color, don't bother
         if self.userPrefs["num_colors"] > 1:
             self.api_TCA_call()
@@ -51,13 +63,28 @@ class colorPalette:
         if self.userPrefs["light_dark"] == True:
             hsvValue[2] = .40
         else:
-            hsvValue[2] = .75
+            hsvValue[2] = .68
 
         self.baseColor = colorutils.Color(
             hsv=(hsvValue[0], hsvValue[1], hsvValue[2]))
         # husl.husl_to_hex(
         #    hsvValue[0], hsvValue[1], hsvValue[2])
         self.colorList.append(self.baseColor.hex[1:])
+        return
+
+    # step 1 alt: given a custom hex code, assign it to basecolor and determine light/dark
+
+    def assignBaseColor(self):
+        # TODO hex will be read in from userprefs
+        self.baseColor = colorutils.Color(hex="0047AB")
+        self.colorList.append(self.baseColor.hex[1:])
+
+        # determine light/dark by value (TODO: account for human perception of purple vs yellow?? if hue is between certain values?)
+        if self.getBaseColorValue > .5:
+            self.userPrefs["light_dark"] = False
+        else:
+            self.userPrefs["light_dark"] = True
+
         return
 
     # step 2: from base color + user inputs, api color palette
@@ -141,46 +168,46 @@ class colorPalette:
         if len(self.colorList) >= 6:
             self.colorList[5] = self.adjustColor(self.colorList[5], 's', -.05)
 
-        # bold-subtle contrast
-        # TCA already gives incredibly little value variation so for subtle, i do nothing
-        if self.userPrefs["bold_subtle"] == False:
-            # for bold:
-            if self.userPrefs["light_dark"] == False:
-                # if light mode, increase the value of: bg +.10,
-                # decrease the value of: main window -.1, header/footer -.10, button -.15
-                if len(self.colorList) >= 1:
-                    self.colorList[0] = self.adjustColor(
-                        self.colorList[0], 'v', -.07)
-                if len(self.colorList) >= 2:
-                    self.colorList[1] = self.adjustColor(
-                        self.colorList[1], 'v', .1)
-                if len(self.colorList) >= 3:
-                    self.colorList[2] = self.adjustColor(
-                        self.colorList[2], 'v', -.15)
-                if len(self.colorList) >= 5:
-                    self.colorList[4] = self.adjustColor(
-                        self.colorList[4], 'v', -.1)
-            else:
-                # if dark mode, increase the value of: buttons +.05, alert +.05
-                # decrease the value of:bg -.10, main window -.05
-                if len(self.colorList) >= 1:
-                    self.colorList[0] = self.adjustColor(
-                        self.colorList[0], 'v', -.05)
-                if len(self.colorList) >= 2:
-                    self.colorList[1] = self.adjustColor(
-                        self.colorList[1], 'v', -.1)
-                if len(self.colorList) >= 3:
-                    self.colorList[2] = self.adjustColor(
-                        self.colorList[2], 'v', .05)
-                if len(self.colorList) >= 4:
-                    self.colorList[3] = self.adjustColor(
-                        self.colorList[3], 'v', .05)
+        # LIGHT VS DARK MODE tweaks for all settings
+        valueAdjustments = self.ValueAdjustmentLists[0]
+
+        # find appropriate adjustment list
+        if (self.userPrefs["light_dark"] == False and self.userPrefs["bold_subtle"] == False):
+            # light/bold
+            valueAdjustments = self.ValueAdjustmentLists[0]
+        elif (self.userPrefs["light_dark"] == False and self.userPrefs["bold_subtle"] == True):
+            # light/subtle
+            valueAdjustments = self.ValueAdjustmentLists[1]
+        elif (self.userPrefs["light_dark"] == True and self.userPrefs["bold_subtle"] == False):
+            # dark/bold
+            valueAdjustments = self.ValueAdjustmentLists[2]
+        else:
+            # dark/subtle
+            valueAdjustments = self.ValueAdjustmentLists[3]
+
+        # now that we have the right list, make the adjustments
+        if len(self.colorList) >= 2:  # background
+            self.colorList[1] = self.adjustColor(
+                self.colorList[1], 'v', valueAdjustments[1])
+        if len(self.colorList) >= 3:  # buttons
+            self.colorList[2] = self.adjustColor(
+                self.colorList[2], 'v', valueAdjustments[2])
+        if len(self.colorList) >= 4:  # alert
+            self.colorList[3] = self.adjustColor(
+                self.colorList[3], 'v', valueAdjustments[3])
+        if len(self.colorList) >= 5:
+            self.colorList[4] = self.adjustColor(
+                self.colorList[4], 'v', valueAdjustments[4])
+        if len(self.colorList) >= 6:  # secondary window
+            self.colorList[5] = self.adjustColor(
+                self.colorList[5], 'v', valueAdjustments[5])
 
     # CALL THIS FUNCTION IN ORDER TO ADJUST A COLOR HEX
     # THIS WILL RETURN THE ADJUSTED COLOR HEX, NO HASH
     # colorHex should be the hex, no hashtag
     # thingToAdjust should be either: 'h', 's', or 'v'
     # AdjustBy should be negative if wanting to decrement
+
     def adjustColor(self, colorHex, thingToAdjust, AdjustBy):
         startColor = Color(hex=colorHex)
         fixColorHsvTuple = startColor.hsv
@@ -232,6 +259,12 @@ class colorPalette:
 
     def getBaseColorHSV(self):
         return self.baseColor.hsv
+
+    def getBaseColorHue(self):
+        return self.baseColor.hsv[0]
+
+    def getBaseColorValue(self):
+        return self.baseColor.hsv[2]
 
     def getJsonPalettes(self):
         return json.dumps(self.colorList)

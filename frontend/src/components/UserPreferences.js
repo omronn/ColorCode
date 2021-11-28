@@ -7,6 +7,8 @@ import Switch from "react-switch";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { HuePicker } from 'react-color';
+// import tinycolor2 from 'tinycolor2';
+import { HexColorPicker, HexColorInput } from "react-colorful"; // npm install react-colorful
 
 function UserPreferences() {
     const [lightDark, setLightDark] = useState(false);
@@ -15,6 +17,9 @@ function UserPreferences() {
     const [boldSubtle, setBoldSubtle] = useState(false);
     const [numColors, setNumColors] = useState(1);
     const [mainColor, setMainColor] = useState(0);
+    const [baseColor, setBaseColor] = useState("#ffffff");
+    // var tinycolor = require("tinycolor2");
+    // var tinyBaseColor = tinycolor(basecolor) //this might be needed for color calculations later, im still researching
 
     const FetchPreferences = () => {
         // Get preferences (new or old) and save the state
@@ -103,8 +108,8 @@ function UserPreferences() {
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="my-auto">
                             <HuePicker className="justify-content-center"
-                                color={{ h: mainColor, s: 0, l: .10 }}
-                                onChangeComplete={(color) => { setMainColor(Math.round(color.hsl.h))}}
+                                thiscolor={{ h: mainColor, s: .40, l: .10 }}
+                                onChangeComplete={(thiscolor) => { console.log(thiscolor.hex); setMainColor(Math.round(thiscolor.hsl.h)); setBaseColor(thiscolor.hex)}}
                             />
                         </Col>
                     </Row>
@@ -156,12 +161,52 @@ function UserPreferences() {
         );
     }
 
+    const ColorReference = () => {
+        return (
+            <Container className="text-black text-center align-self-center" style={{backgroundColor: baseColor}}>Color: {baseColor}</Container>
+        );
+    }
+
+    const TestColorPicker = () => {
+        return (
+            <HuePicker className="justify-content-center"
+                thiscolor={{ h: mainColor, s: .40, l: .10 }}
+                onChangeComplete={(thiscolor) => { setMainColor(Math.round(thiscolor.hsl.h)); setBaseColor(thiscolor.hex)}}
+            />
+        );
+    }
+
+    const TestColorPicker2 = () => {
+        return (
+            <HexColorPicker className="justify-content-center"
+                newColor={{ baseColor }}
+                onChange={(newColor) => { setBaseColor(newColor) }}
+            />
+        );
+    } //trying to debug the bad hook using this
+
+    // const CustomColorPicker = () => {
+    //     return (
+    //         <Container className="customPicker">
+    //           <HexColorPicker className="justify-content-center"
+    //               baseColor={baseColor} 
+    //               onChange={(baseColor) => { setBaseColor(baseColor) }}
+    //           />
+    //           <HexColorInput baseColor={baseColor} onChange={(baseColor) => {setBaseColor(baseColor)}}/>
+    //         </Container>
+    //       );
+    // } // this will be the final version once i figure out the bad hook
+
     // Fetches preferences once, upon page load
     useEffect(FetchPreferences, []);
 
     return (
         <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1>I Want...</h1>
+            <ColorReference />
+            <TestColorPicker />
+            {/* <TestColorPicker2 /> */}
+            {/* <CustomColorPicker /> */}
             <Preferences />
             <GenerateButton />
         </Container>
