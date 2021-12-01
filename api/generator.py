@@ -25,7 +25,7 @@ class colorPalette:
         self.colorList = []  # list of hex elements to be filled
         self.userPrefs = user_preferences
         # TODO this will be a user_preferences variable once i get hex codes running
-        self.customHex = False
+        self.customHex = True
         self.ValueAdjustmentLists = [
             [0, .20, -.12, .1, -.15, .1],  # light/bold
             [0, .17, -.08, .07, -.1, .07],  # light/subtle
@@ -76,11 +76,11 @@ class colorPalette:
 
     def assignBaseColor(self):
         # TODO hex will be read in from userprefs
-        self.baseColor = colorutils.Color(hex="0047AB")
+        self.baseColor = colorutils.Color(hex=self.userPrefs['main_color'])
         self.colorList.append(self.baseColor.hex[1:])
 
         # determine light/dark by value (TODO: account for human perception of purple vs yellow?? if hue is between certain values?)
-        if self.getBaseColorValue > .5:
+        if self.getBaseColorValue() > .5:
             self.userPrefs["light_dark"] = False
         else:
             self.userPrefs["light_dark"] = True

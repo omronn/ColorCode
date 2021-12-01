@@ -19,10 +19,14 @@ class UserPreferences(models.Model):
                                      validators=[MaxValueValidator(
                                          10), MinValueValidator(1)]
                                      )
+
+    main_color = models.CharField(null=False, max_length=7, default='#ffffff')
+    """
     main_color = models.IntegerField(null=False, default=0,
                                      validators=[MaxValueValidator(
                                          360), MinValueValidator(0)]
                                      )
+    """
 
 class PaletteModel(models.Model):
     #user = models.ForeignKey(UserPreferences, on_delete=models.CASCADE)
