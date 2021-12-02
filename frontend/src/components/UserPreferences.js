@@ -6,35 +6,37 @@ import Form from "react-bootstrap/Form";
 import Switch from "react-switch";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-//import { HuePicker } from 'react-color';
-// import tinycolor2 from 'tinycolor2';
+//npm install tinycolor2 (no import line but you need to run this!)
 import { HexColorPicker } from "react-colorful"; // npm install react-colorful
+import '../../static/css/index.css'; //this ensures it's included but doesnt help it overwrite. use !important for crucial css
 
 function UserPreferences() {
+
+    ///////////////////////////////////////////////
+    ////////////////// VARIABLES //////////////////    
+    ///////////////////////////////////////////////
+
     const [lightDark, setLightDark] = useState(false);
     const [neonPastel, setNeonPastel] = useState(false);
     const [oneManyHues, setOneManyHues] = useState(false);
     const [boldSubtle, setBoldSubtle] = useState(false);
     const [numColors, setNumColors] = useState(1);
-    const [baseColor, setBaseColor] = useState("#ffffff");
+    const [baseColor, setBaseColor] = useState("#ad0909"); //this is the default starter hex
     
     // consts beyond this point do NOT need to be passed back to django. 
     // they are solely variables for use within this page 8^)
+
+    //these represent the NUMERIC VALUES of HSV, in order
     const [hueVal, setHueVal] = useState(0);
     const [neonVal, setNeonVal] = useState(.95);
     const [darkVal, setdarkVal] = useState(.68);
-    var tinycolor = require("tinycolor2");
+    var tinycolor = require("tinycolor2"); //this makes tinycolor work
 
-    const UpdateColorAction = () => {      
-        //make the new color
-        let newColor = "hsv " + hueVal + " " + neonVal + " " + darkVal;
-        let tinyBaseColor = tinycolor(newColor);
+    const [isCustom, setIsCustom] = useState(false);
 
-        //printouts for sanity checking
-        console.log("updateColor", newColor, tinyBaseColor.toHexString());
-        console.log("neonPastel", neonPastel, ", lightDark,", lightDark );
-        setBaseColor(tinyBaseColor.toHexString());
-    }
+    ///////////////////////////////////////////////
+    ////// FETCHPREFERENCES AND PREFERENCES ///////    
+    ///////////////////////////////////////////////
 
     const FetchPreferences = () => {
         // Get preferences (new or old) and save the state
@@ -56,12 +58,12 @@ function UserPreferences() {
                 setBoldSubtle(data.bold_subtle);
                 setNumColors(data.num_colors);
                 setBaseColor(data.main_color);
-                UpdateColorAction();
+                //UpdateColorAction();
             }
         ).catch((error) => console.log("Fetching Preferences Failed"));
     }
     
-    // Functions for subcomponents
+    // THE MAIN SUBCOMPONENT
     const Preferences = () => {
         return (
             <Container fluid className="p-3 my-3 align-self-center">
@@ -73,12 +75,12 @@ function UserPreferences() {
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="my-auto">
-                            <SwitchColorPicker></SwitchColorPicker>
+                            <ColorPickerHolder></ColorPickerHolder>
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="my-auto">
-                            <CustomColorPicker></CustomColorPicker>
+                            <ToggleColorButton></ToggleColorButton>
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
@@ -91,36 +93,69 @@ function UserPreferences() {
         );
     }
 
-    //setVAR is async: useEffect should update the color whenver it changes
+    ///////////////////////////////////////////////
+    /// COLOR GENERATION ACTIONS AND USEEFFECTS ///    
+    ///////////////////////////////////////////////
+
+    //setVAR is async: a useEffect should update the color whenever it changes
+
+    //changes lightDark
     const LightSwitchAction = () => {
         console.log("lSA: lightDark is currently", lightDark);
         setLightDark(!lightDark); 
         
     }
 
+    //updates the darkVal if lightDark changes
     useEffect(() => {
         console.log("lightDark is now", lightDark, "update the val");
         if (lightDark) {setdarkVal(0.40)}
         else {setdarkVal(0.68)};
     }, [lightDark]);
 
+    //changes neonPastel
     const NeonSwitchAction = () => {
         console.log("nSA: neonPastel is currently", neonPastel);
         setNeonPastel(!neonPastel);
     }
 
+    //updates the neonVal if neonPastel changes
     useEffect(() => {
         console.log("neonPastel is now", neonPastel, "update the val");
         if (neonPastel) { setNeonVal(.40) }
         else { setNeonVal(.95)};
     }, [neonPastel]);
 
+    //calls UpdateColorAction if either neonVal or darkVal change
     useEffect(() => {
         console.log("a Value has updated. NOW we can run UpdateColorAction")
         UpdateColorAction();
     }, [neonVal, darkVal]); 
 
+    //updates the baseColor using tinycolor and the current HSV values
+    const UpdateColorAction = () => {      
+        //make the new color
+        let newColor = "hsv " + hueVal + " " + neonVal + " " + darkVal;
+        let tinyBaseColor = tinycolor(newColor);
 
+        //printouts for sanity checking
+        console.log("updateColor", newColor, tinyBaseColor.toHexString());
+        console.log("neonPastel", neonPastel, ", lightDark,", lightDark );
+        setBaseColor(tinyBaseColor.toHexString());
+    }
+
+    //when the baseColor is changed, this grabs the hue and saves it. 
+    //technically this runs when changing from switches too but no one can click fast enough to mess it up lol
+    useEffect(() => {
+        console.log("new baseColor: save hue");
+        let tinyHueGrab = tinycolor(baseColor);
+        console.log(tinyHueGrab.toHsv().h);
+        setHueVal(tinyHueGrab.toHsv().h);
+    }, [baseColor]);
+
+    ///////////////////////////////////////////////
+    /////// BONUS: INFOBUTTON FOR DEBUGGING ///////    
+    ///////////////////////////////////////////////
 
     // this is for debugging . print whatever you want to console.log!!
     const InfoButtonAction = () => {
@@ -135,6 +170,10 @@ function UserPreferences() {
             <Button onClick={ InfoButtonAction } variant="success">console.log</Button>
         );
     }
+
+    ////////////////////////////////////////////
+    /////////////  GENERATE BUTTON /////////////    
+    ////////////////////////////////////////////
 
     const GenerateButtonAction = () => {
         // Get preferences (new or old) and save the state
@@ -179,15 +218,21 @@ function UserPreferences() {
         );
     }
 
+    /////////////////////////////////////////////
+    /// COLORPICKER CONSTS AND COLORREFERENCE ///    
+    /////////////////////////////////////////////
+
+    //this gives the little reference square with the color as bg
     const ColorReference = () => {
         return (
             <Container className="text-black text-center align-self-center" style={{backgroundColor: baseColor}}>Color: {baseColor}</Container>
         );
     }
 
+    //this lets you choose a color via switches and hue slider
     const SwitchColorPicker = () => {
         return (
-            <Container fluid className="p-3 my-3 bg-secondary align-self-center">
+            <Container fluid className="p-3 my-3 align-self-center">
                 <Form className="my-auto">
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="align-self-center"> 
@@ -211,11 +256,81 @@ function UserPreferences() {
                             Pastel
                         </Col>
                     </Row>
+                    <Row>
+                        <Col>
+                            <section className="hue-only">
+                                <HexColorPicker className="justify-content-center"
+                                    color={baseColor} 
+                                    onChange={setBaseColor}
+                                />
+                            </section>
+                        </Col>
+                    </Row>
                 </Form>
             </Container>
         )
     }
 
+    //this lets you choose a custom color via picker or hex input
+    const CustomColorPicker = () => {
+        return (
+            <Container className="customPicker">
+              <HexColorPicker className="justify-content-center"
+                  color={baseColor} 
+                  onChange={setBaseColor}
+                />
+                <Form>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        <Form.Label>Hexcode Input (Optional):</Form.Label>
+                        <Form.Control type="text" placeholder={baseColor} onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                setBaseColor(e.target.value);
+                            }
+                        }} />
+                    </Form.Group>
+                </Form>
+            </Container>
+          );
+    }
+
+    //this holds EITHER switchColorPicker OR CustomColorPicker and lets you toggle between them
+    const ColorPickerHolder = () => {
+        if (isCustom) {
+            return (
+                <Container className="color-input bg-secondary">
+                    <CustomColorPicker></CustomColorPicker>
+                </Container>
+            );
+        }
+        else {
+            return (
+                <Container className="color-input bg-secondary">
+                    <SwitchColorPicker></SwitchColorPicker>
+                </Container>
+            );
+        }
+    }
+
+    //this button switches between the kinds of colorpicker
+    const ToggleColorButton = () => {
+        let buttonText = "...or input a custom color"
+        if (isCustom) { buttonText = "...or use buttons" }
+        return (
+            <Button onClick={ ToggleColorButtonAction } variant="success">{ buttonText }</Button>
+        );
+    }
+
+    const ToggleColorButtonAction = () => {
+        console.log("switching color selection type");
+        setIsCustom(!isCustom);
+    }
+
+
+    /////////////////////////////////////////////
+    /////////// PALETTE PICKER CONST ////////////    
+    /////////////////////////////////////////////
+    
+    //this holds the PALETTE generating inputs (numColors, oneManyColors, etc)
     const SwitchPalettePicker = () => {
         return (
             <Container fluid className="p-3 my-3 bg-secondary align-self-center">
@@ -256,38 +371,9 @@ function UserPreferences() {
     }
 
 
-    const CustomColorPicker = () => {
-        return (
-            <Container className="customPicker">
-              <HexColorPicker className="justify-content-center"
-                  color={baseColor} 
-                  onChange={setBaseColor}
-                />
-                <Form>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                        <Form.Label>Hexcode Input (Optional):</Form.Label>
-                        <Form.Control type="text" placeholder={baseColor} onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                setBaseColor(e.target.value);
-                            }
-                        }} />
-                    </Form.Group>
-                </Form>
-            </Container>
-          );
-    } // this will be the final version once i figure out the bad hook
-
-    //when the baseColor is changed, this grabs the hue and saves it. 
-    //technically this runs when changing from switches too but i wasnt sure how to specify
-    //do NOT then run updateColor or it might infinite loop? unclear but you dont need to
-    //because this is just holding on in CASE user changes things later
-    //and no one can click fast enough to mess it up lol
-    useEffect(() => {
-        console.log("new baseColor: save hue");
-        let tinyHueGrab = tinycolor(baseColor);
-        console.log(tinyHueGrab.toHsv().h);
-        setHueVal(tinyHueGrab.toHsv().h);
-    }, [baseColor]);
+    //////////////////////////////////////////////
+    //////////// PAGE LOAD AND RENDER ////////////    
+    //////////////////////////////////////////////
 
     // Fetches preferences once, upon page load
     useEffect(FetchPreferences, []);
