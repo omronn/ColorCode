@@ -25,10 +25,14 @@ function UserPreferences() {
     const [darkVal, setdarkVal] = useState(.68);
     var tinycolor = require("tinycolor2");
 
-    const updateColorAction = () => {
+    const UpdateColorAction = () => {      
+        //make the new color
         let newColor = "hsv " + hueVal + " " + neonVal + " " + darkVal;
-        console.log("updateColor", newColor);
         let tinyBaseColor = tinycolor(newColor);
+
+        //printouts for sanity checking
+        console.log("updateColor", newColor, tinyBaseColor.toHexString());
+        console.log("neonPastel", neonPastel, ", lightDark,", lightDark );
         setBaseColor(tinyBaseColor.toHexString());
     }
 
@@ -52,7 +56,7 @@ function UserPreferences() {
                 setBoldSubtle(data.bold_subtle);
                 setNumColors(data.num_colors);
                 setBaseColor(data.main_color);
-                updateColorAction();
+                UpdateColorAction();
             }
         ).catch((error) => console.log("Fetching Preferences Failed"));
     }
@@ -87,20 +91,49 @@ function UserPreferences() {
         );
     }
 
-    const lightSwitchAction = () => {
+    //setVAR is async: useEffect should update the color whenver it changes
+    const LightSwitchAction = () => {
+        console.log("lSA: lightDark is currently", lightDark);
         setLightDark(!lightDark); 
-        if (lightDark) {setdarkVal(0.40)}
-        else {setdarkVal(0.68)};
-        console.log("darkval ", darkVal);
-        updateColorAction();
+        
     }
 
-    const neonSwitchAction = () => {
-        setNeonPastel(!neonPastel); 
+    useEffect(() => {
+        console.log("lightDark is now", lightDark, "update the val");
+        if (lightDark) {setdarkVal(0.40)}
+        else {setdarkVal(0.68)};
+    }, [lightDark]);
+
+    const NeonSwitchAction = () => {
+        console.log("nSA: neonPastel is currently", neonPastel);
+        setNeonPastel(!neonPastel);
+    }
+
+    useEffect(() => {
+        console.log("neonPastel is now", neonPastel, "update the val");
         if (neonPastel) { setNeonVal(.40) }
         else { setNeonVal(.95)};
-        console.log("neonval ", neonVal);
-        updateColorAction();
+    }, [neonPastel]);
+
+    useEffect(() => {
+        console.log("a Value has updated. NOW we can run UpdateColorAction")
+        UpdateColorAction();
+    }, [neonVal, darkVal]); 
+
+
+
+    // this is for debugging . print whatever you want to console.log!!
+    const InfoButtonAction = () => {
+        console.log("INFOBUTTON:");
+        console.log("neonPastel is currently", neonPastel);
+        console.log("lightDark is currently", lightDark);
+        console.log("hsv " + hueVal + " " + neonVal + " " + darkVal);
+    }
+
+    const InfoButton = () => {
+        return (
+            <Button onClick={ InfoButtonAction } variant="success">console.log</Button>
+        );
     }
 
     const GenerateButtonAction = () => {
@@ -161,7 +194,7 @@ function UserPreferences() {
                             Light
                         </Col>
                         <Col xs="auto" className="align-self-center">
-                            <Switch onChange={() => { lightSwitchAction(); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
+                            <Switch onChange={() => { LightSwitchAction(); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
                         </Col>
                         <Col xs="auto" className="align-self-center"> 
                             Dark
@@ -172,7 +205,7 @@ function UserPreferences() {
                             Neon
                         </Col>
                         <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { neonSwitchAction(); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
+                            <Switch onChange={() => { NeonSwitchAction(); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
                         </Col>
                         <Col xs="auto" className="align-self-center"> 
                             Pastel
@@ -222,6 +255,7 @@ function UserPreferences() {
         );
     }
 
+
     const CustomColorPicker = () => {
         return (
             <Container className="customPicker">
@@ -243,12 +277,25 @@ function UserPreferences() {
           );
     } // this will be the final version once i figure out the bad hook
 
+    //when the baseColor is changed, this grabs the hue and saves it. 
+    //technically this runs when changing from switches too but i wasnt sure how to specify
+    //do NOT then run updateColor or it might infinite loop? unclear but you dont need to
+    //because this is just holding on in CASE user changes things later
+    //and no one can click fast enough to mess it up lol
+    useEffect(() => {
+        console.log("new baseColor: save hue");
+        let tinyHueGrab = tinycolor(baseColor);
+        console.log(tinyHueGrab.toHsv().h);
+        setHueVal(tinyHueGrab.toHsv().h);
+    }, [baseColor]);
+
     // Fetches preferences once, upon page load
     useEffect(FetchPreferences, []);
 
     return (
         <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
             <h1>I Want...</h1>
+            <InfoButton />
             <Preferences />
             <GenerateButton />
         </Container>
