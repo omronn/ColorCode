@@ -16,10 +16,21 @@ function UserPreferences() {
     const [oneManyHues, setOneManyHues] = useState(false);
     const [boldSubtle, setBoldSubtle] = useState(false);
     const [numColors, setNumColors] = useState(1);
-    //const [mainColor, setMainColor] = useState(0);
     const [baseColor, setBaseColor] = useState("#ffffff");
-    // var tinycolor = require("tinycolor2");
-    // var tinyBaseColor = tinycolor(basecolor) //this might be needed for color calculations later, im still researching
+    
+    // consts beyond this point do NOT need to be passed back to django. 
+    // they are solely variables for use within this page 8^)
+    const [hueVal, setHueVal] = useState(0);
+    const [neonVal, setNeonVal] = useState(.95);
+    const [darkVal, setdarkVal] = useState(.68);
+    var tinycolor = require("tinycolor2");
+
+    const updateColorAction = () => {
+        let newColor = "hsv " + hueVal + " " + neonVal + " " + darkVal;
+        console.log("updateColor", newColor);
+        let tinyBaseColor = tinycolor(newColor);
+        setBaseColor(tinyBaseColor.toHexString());
+    }
 
     const FetchPreferences = () => {
         // Get preferences (new or old) and save the state
@@ -41,6 +52,7 @@ function UserPreferences() {
                 setBoldSubtle(data.bold_subtle);
                 setNumColors(data.num_colors);
                 setBaseColor(data.main_color);
+                updateColorAction();
             }
         ).catch((error) => console.log("Fetching Preferences Failed"));
     }
@@ -48,60 +60,8 @@ function UserPreferences() {
     // Functions for subcomponents
     const Preferences = () => {
         return (
-            <Container fluid className="p-3 my-3 bg-secondary align-self-center">
+            <Container fluid className="p-3 my-3 align-self-center">
                 <Form className="my-auto">
-                    <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Light
-                        </Col>
-                        <Col xs="auto" className="align-self-center">
-                            <Switch onChange={() => { setLightDark(!lightDark); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Dark
-                        </Col>
-                    </Row>
-                    <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Neon
-                        </Col>
-                        <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { setNeonPastel(!neonPastel); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Pastel
-                        </Col>
-                    </Row>
-                    <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Monochrome
-                        </Col>
-                        <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Multiple Colors
-                        </Col>
-                    </Row>
-                    <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Bold
-                        </Col>
-                        <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Subtle
-                        </Col>
-                    </Row>
-                    <Row className="p-1 justify-content-center">
-                        Number of Colors: {numColors}
-                    </Row>
-                    <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="my-auto">
-                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='6' step='1'/>
-                        </Col>
-                    </Row>
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="my-auto">
                             <ColorReference></ColorReference>
@@ -109,12 +69,38 @@ function UserPreferences() {
                     </Row>
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="my-auto">
+                            <SwitchColorPicker></SwitchColorPicker>
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="my-auto">
                             <CustomColorPicker></CustomColorPicker>
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="my-auto">
+                            <SwitchPalettePicker></SwitchPalettePicker>
                         </Col>
                     </Row>
                 </Form>
             </Container>
         );
+    }
+
+    const lightSwitchAction = () => {
+        setLightDark(!lightDark); 
+        if (lightDark) {setdarkVal(0.40)}
+        else {setdarkVal(0.68)};
+        console.log("darkval ", darkVal);
+        updateColorAction();
+    }
+
+    const neonSwitchAction = () => {
+        setNeonPastel(!neonPastel); 
+        if (neonPastel) { setNeonVal(.40) }
+        else { setNeonVal(.95)};
+        console.log("neonval ", neonVal);
+        updateColorAction();
     }
 
     const GenerateButtonAction = () => {
@@ -163,6 +149,76 @@ function UserPreferences() {
     const ColorReference = () => {
         return (
             <Container className="text-black text-center align-self-center" style={{backgroundColor: baseColor}}>Color: {baseColor}</Container>
+        );
+    }
+
+    const SwitchColorPicker = () => {
+        return (
+            <Container fluid className="p-3 my-3 bg-secondary align-self-center">
+                <Form className="my-auto">
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="align-self-center"> 
+                            Light
+                        </Col>
+                        <Col xs="auto" className="align-self-center">
+                            <Switch onChange={() => { lightSwitchAction(); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
+                        </Col>
+                        <Col xs="auto" className="align-self-center"> 
+                            Dark
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="align-self-center"> 
+                            Neon
+                        </Col>
+                        <Col xs="auto" className="my-auto">
+                            <Switch onChange={() => { neonSwitchAction(); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
+                        </Col>
+                        <Col xs="auto" className="align-self-center"> 
+                            Pastel
+                        </Col>
+                    </Row>
+                </Form>
+            </Container>
+        )
+    }
+
+    const SwitchPalettePicker = () => {
+        return (
+            <Container fluid className="p-3 my-3 bg-secondary align-self-center">
+                <Form className="my-auto">
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="align-self-center"> 
+                            Monochrome
+                        </Col>
+                        <Col xs="auto" className="my-auto">
+                            <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
+                        </Col>
+                        <Col xs="auto" className="align-self-center"> 
+                            Multiple Colors
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="align-self-center"> 
+                            Bold
+                        </Col>
+                        <Col xs="auto" className="my-auto">
+                            <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
+                        </Col>
+                        <Col xs="auto" className="align-self-center"> 
+                            Subtle
+                        </Col>
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        Number of Colors: {numColors}
+                    </Row>
+                    <Row className="p-1 justify-content-center">
+                        <Col xs="auto" className="my-auto">
+                            <Form.Range value={numColors} onChange={(e) => { setNumColors(e.target.value); }} min='1' max='6' step='1'/>
+                        </Col>
+                    </Row>
+                </Form>
+            </Container>
         );
     }
 
