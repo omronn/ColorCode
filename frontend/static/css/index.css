@@ -25,7 +25,6 @@ body {
 
 .react-colorful {
   padding: 10px;
-  margin: 10px;
   border-radius: 10px;
   background: #33333a;
 }
@@ -39,6 +38,10 @@ body {
 .react-colorful__hue {
   margin: 3px;
   border-radius: 5px !important;
+}
+
+#exampleForm.ControlInput1 {
+  width: 200px;
 }
 
 /* ESSENTIAL: THESE ONES ARE WHAT MAKE THE HUE SLIDER A SLIDER */
@@ -64,8 +67,85 @@ body {
 }
 
 .color-input {
-  height: 315px;
+  height: 300px;
   width: 300px;
+}
+
+.palette-input {
+  width: 300px;
+}
+
+.color-reference {
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* this makes the hex input look pretty */
+.hex-input {
+  display: block;
+  box-sizing: border-box;
+  width: 90px;
+  margin: 10px 55px 0;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #eee;
+  outline: none;
+  font: inherit;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.hex-input:focus {
+  border-color: #4298ef;
+}
+
+.togglebutton {
+  margin-bottom: 20px;
+}
+
+/*******************/
+/*** BUTTON HELL ***/
+/*******************/
+
+.btn-rainbow {
+  background: linear-gradient(
+    45deg,
+    #dc3b3e,
+    #3b99dc 50%,
+    #3bdc90 75%,
+    rgb(255 141 0) 100%
+  ) !important;
+  border-color: black !important;
+}
+
+.btn-neon {
+  background: #91ff00 !important;
+}
+
+.btn-pastel {
+  background: #c2ee8c !important;
+}
+
+.btn-notrainbow {
+  background: linear-gradient(
+    45deg,
+    #3bdcd4,
+    #3b99dc 50%,
+    #3b46dc 75%,
+    #733bdc 100%
+  ) !important;
+  border-color: black !important;
+}
+
+.btn-bold {
+  background: black !important;
+  color: yellow !important;
+}
+
+.btn-subtle {
+  background: darkblue !important;
+  color: darkorange !important;
 }
 
 /*******************/

@@ -3,11 +3,12 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Switch from "react-switch";
+// import Switch from "react-switch";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 //npm install tinycolor2 (no import line but you need to run this!)
-import { HexColorPicker } from "react-colorful"; // npm install react-colorful
+import { HexColorPicker, HexColorInput } from "react-colorful"; // npm install react-colorful
+import BootstrapSwitchButton from 'bootstrap-switch-button-react'; // npm i bootstrap-switch-button-react
 import '../../static/css/index.css'; //this ensures it's included but doesnt help it overwrite. use !important for crucial css
 
 function UserPreferences() {
@@ -66,10 +67,11 @@ function UserPreferences() {
     // THE MAIN SUBCOMPONENT
     const Preferences = () => {
         return (
-            <Container fluid className="p-3 my-3 align-self-center">
+            <Container fluid className="p-3 align-self-center">
+                <h2>I want my main color to be...</h2>
                 <Form className="my-auto">
                     <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="my-auto">
+                        <Col sm="auto" className="my-auto mt-auto">
                             <ColorReference></ColorReference>
                         </Col>
                     </Row>
@@ -83,6 +85,8 @@ function UserPreferences() {
                             <ToggleColorButton></ToggleColorButton>
                         </Col>
                     </Row>
+
+                    <h2>I want my palette to be...</h2>
                     <Row className="p-1 justify-content-center">
                         <Col xs="auto" className="my-auto">
                             <SwitchPalettePicker></SwitchPalettePicker>
@@ -147,7 +151,8 @@ function UserPreferences() {
     //when the baseColor is changed, this grabs the hue and saves it. 
     //technically this runs when changing from switches too but no one can click fast enough to mess it up lol
     useEffect(() => {
-        console.log("new baseColor: save hue");
+        console.log("new baseColor", baseColor, ": save hue");
+        // if (baseColor == "#ffffff") { setBaseColor("#ad0909"); return; };
         let tinyHueGrab = tinycolor(baseColor);
         console.log(tinyHueGrab.toHsv().h);
         setHueVal(tinyHueGrab.toHsv().h);
@@ -163,6 +168,7 @@ function UserPreferences() {
         console.log("neonPastel is currently", neonPastel);
         console.log("lightDark is currently", lightDark);
         console.log("hsv " + hueVal + " " + neonVal + " " + darkVal);
+        console.log("base color is currently", baseColor);
     }
 
     const InfoButton = () => {
@@ -203,6 +209,7 @@ function UserPreferences() {
                 setBoldSubtle(data.bold_subtle);
                 setNumColors(data.num_colors);
                 setBaseColor(data.main_color);
+                console.log("data", data.main_color);
             }
         ).then(
             () => {
@@ -214,7 +221,7 @@ function UserPreferences() {
 
     const GenerateButton = () => {
         return (
-            <Button onClick={ GenerateButtonAction } variant="success">Generate?!</Button>
+            <Button onClick={ GenerateButtonAction } variant="success" size="lg">Generate!</Button>
         );
     }
 
@@ -225,39 +232,36 @@ function UserPreferences() {
     //this gives the little reference square with the color as bg
     const ColorReference = () => {
         return (
-            <Container className="text-black text-center align-self-center" style={{backgroundColor: baseColor}}>Color: {baseColor}</Container>
+            <Container className="color-reference text-black text-center align-self-center" 
+            style={{backgroundColor: baseColor}}>Color: {baseColor}</Container>
         );
     }
 
     //this lets you choose a color via switches and hue slider
     const SwitchColorPicker = () => {
         return (
-            <Container fluid className="p-3 my-3 align-self-center">
+            <Container fluid className="switch-picker p-3 align-self-center">
                 <Form className="my-auto">
                     <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Light
-                        </Col>
-                        <Col xs="auto" className="align-self-center">
-                            <Switch onChange={() => { LightSwitchAction(); } } checked={lightDark} checkedIcon="" uncheckedIcon=""/> 
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Dark
+                        <Col sm="auto" className="align-self-center">
+                            <BootstrapSwitchButton
+                                onChange={() => { LightSwitchAction(); } } checked={lightDark}
+                                onlabel='Dark' offlabel='Light' 
+                                onstyle="dark" offstyle="light" width={200} size="lg"
+                            /> 
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Neon
-                        </Col>
-                        <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { NeonSwitchAction(); } } checked={neonPastel} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Pastel
+                        <Col sm="auto" className="my-auto">
+                            <BootstrapSwitchButton
+                                onChange={() => { NeonSwitchAction(); } } checked={neonPastel}
+                                onlabel='Pastel' offlabel='Neon' 
+                                onstyle="pastel" offstyle="neon" width={200} size="lg"
+                            /> 
                         </Col>
                     </Row>
-                    <Row>
-                        <Col>
+                    <Row className="p-1 justify-content-center">
+                        <Col sm="auto" className="my-auto">
                             <section className="hue-only">
                                 <HexColorPicker className="justify-content-center"
                                     color={baseColor} 
@@ -274,21 +278,24 @@ function UserPreferences() {
     //this lets you choose a custom color via picker or hex input
     const CustomColorPicker = () => {
         return (
-            <Container className="customPicker">
-              <HexColorPicker className="justify-content-center"
-                  color={baseColor} 
-                  onChange={setBaseColor}
-                />
-                <Form>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                        <Form.Label>Hexcode Input (Optional):</Form.Label>
-                        <Form.Control type="text" placeholder={baseColor} onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                setBaseColor(e.target.value);
-                            }
-                        }} />
-                    </Form.Group>
-                </Form>
+            <Container className="custom-picker p-3 align-self-center">
+                <Row className="p-1 justify-content-center">
+                    <Col sm="auto" className="my-auto">
+                        <HexColorPicker className="justify-content-center"
+                            color={baseColor} 
+                            onChange={setBaseColor}
+                        />
+                    </Col>
+                </Row>
+                <Row className="p-1 justify-content-center">
+                    <Col sm="auto" className="my-auto">
+                        <HexColorInput className="justify-content-center hex-input"
+                            color={baseColor} 
+                            onChange={setBaseColor}
+                            style={{backgroundColor: baseColor}}
+                        />
+                    </Col>
+                </Row>
             </Container>
           );
     }
@@ -316,7 +323,7 @@ function UserPreferences() {
         let buttonText = "...or input a custom color"
         if (isCustom) { buttonText = "...or use buttons" }
         return (
-            <Button onClick={ ToggleColorButtonAction } variant="success">{ buttonText }</Button>
+            <Button className="togglebutton" onClick={ ToggleColorButtonAction } variant="success">{ buttonText }</Button>
         );
     }
 
@@ -333,28 +340,24 @@ function UserPreferences() {
     //this holds the PALETTE generating inputs (numColors, oneManyColors, etc)
     const SwitchPalettePicker = () => {
         return (
-            <Container fluid className="p-3 my-3 bg-secondary align-self-center">
+            <Container className="palette-input p-3 bg-secondary align-self-center">
                 <Form className="my-auto">
                     <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Monochrome
-                        </Col>
-                        <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Multiple Colors
+                        <Col sm="auto" className="my-auto">
+                            <BootstrapSwitchButton
+                                onChange={() => { setOneManyHues(!oneManyHues); } } checked={oneManyHues}
+                                onlabel='Diverse Hues' offlabel='Similar Hues' 
+                                onstyle="rainbow" offstyle="notrainbow" width={200} size="lg"
+                            /> 
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
-                        <Col xs="auto" className="align-self-center"> 
-                            Bold
-                        </Col>
-                        <Col xs="auto" className="my-auto">
-                            <Switch onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle} checkedIcon="" uncheckedIcon=""/>
-                        </Col>
-                        <Col xs="auto" className="align-self-center"> 
-                            Subtle
+                        <Col sm="auto" className="my-auto">
+                        <BootstrapSwitchButton
+                                onChange={() => { setBoldSubtle(!boldSubtle); } } checked={boldSubtle}
+                                onlabel='Subtle' offlabel='Bold'
+                                onstyle="subtle" offstyle="bold" width={200} size="lg"
+                            /> 
                         </Col>
                     </Row>
                     <Row className="p-1 justify-content-center">
@@ -380,8 +383,7 @@ function UserPreferences() {
 
     return (
         <Container fluid className="overflow-auto vh-100 p-5 bg-dark text-white text-center">
-            <h1>I Want...</h1>
-            <InfoButton />
+            <h1>ColorCode</h1>
             <Preferences />
             <GenerateButton />
         </Container>
