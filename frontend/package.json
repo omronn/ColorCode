@@ -25,12 +25,14 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
+    "bootstrap-switch-button-react": "^1.2.0",
     "react-bootstrap": "^2.0.0-rc.0",
     "react-bootstrap-validation": "^0.1.11",
     "react-color": "^2.19.3",
     "react-colorful": "^5.5.1",
     "react-router-dom": "^5.3.0",
     "react-switch": "^6.0.0",
-    "style-loader": "^3.3.1"
+    "style-loader": "^3.3.1",
+    "tinycolor2": "^1.4.2"
   }
 }

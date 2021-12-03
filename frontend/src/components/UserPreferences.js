@@ -290,9 +290,13 @@ function UserPreferences() {
                 <Row className="p-1 justify-content-center">
                     <Col sm="auto" className="my-auto">
                         <HexColorInput className="justify-content-center hex-input"
-                            color={baseColor} 
-                            onChange={setBaseColor}
+                            color={baseColor}
                             style={{backgroundColor: baseColor}}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    setBaseColor('#' + e.target.value);
+                                }
+                            }}
                         />
                     </Col>
                 </Row>
