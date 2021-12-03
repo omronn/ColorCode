@@ -231,9 +231,11 @@ function UserPreferences() {
 
     //this gives the little reference square with the color as bg
     const ColorReference = () => {
+        //wahoo! readable text!!
+        let textcolor = tinycolor.mostReadable(baseColor, ['#000', '#fff']).toHexString();
         return (
-            <Container className="color-reference text-black text-center align-self-center" 
-            style={{backgroundColor: baseColor}}>Color: {baseColor}</Container>
+            <Container className="color-reference text-center align-self-center" 
+            style={{backgroundColor: baseColor, color: textcolor}}>Color: {baseColor}</Container>
         );
     }
 
@@ -277,6 +279,7 @@ function UserPreferences() {
 
     //this lets you choose a custom color via picker or hex input
     const CustomColorPicker = () => {
+        let textcolor = tinycolor.mostReadable(baseColor, ['#000', '#fff']).toHexString();
         return (
             <Container className="custom-picker p-3 align-self-center">
                 <Row className="p-1 justify-content-center">
@@ -291,7 +294,7 @@ function UserPreferences() {
                     <Col sm="auto" className="my-auto">
                         <HexColorInput className="justify-content-center hex-input"
                             color={baseColor}
-                            style={{backgroundColor: baseColor}}
+                            style={{backgroundColor: baseColor, color: textcolor }}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                     setBaseColor('#' + e.target.value);
