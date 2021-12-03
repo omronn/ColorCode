@@ -58,7 +58,7 @@ body {
 }
 
 /**************************/
-/*** OTHER HOMEPAGE CSS ***/
+/*** OTHER PREFERENCES CSS ***/
 /**************************/
 
 .bg-secondary {
@@ -152,6 +152,15 @@ body {
 /*** FAKE-UI CSS ***/
 /*******************/
 
+.palette-box-overflow {
+  width: 90%;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
 .palette-box {
   width: 90%;
   background-color: #f0f0f0;
@@ -201,4 +210,21 @@ body {
   margin: 2px;
   padding: 2px;
   border-radius: 2px;
+}
+
+/* OTHER PALETTEPAGE CSS */
+
+.color-list {
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0px !important;
+  margin: 5px;
+}
+
+.palette-title {
+  margin-top: 25px;
+}
+
+.fakesite-box {
+  height: 270px;
 }

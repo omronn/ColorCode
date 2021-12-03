@@ -27,9 +27,9 @@ class colorPalette:
         # TODO this will be a user_preferences variable once i get hex codes running
         self.customHex = True
         self.ValueAdjustmentLists = [
-            [0, .20, -.12, .1, -.15, .1],  # light/bold
+            [0, .23, -.15, .12, -.17, .13],  # light/bold
             [0, .17, -.08, .07, -.1, .07],  # light/subtle
-            [0, -.1, .12, .15, .07, .07],  # dark/bold
+            [0, -.15, .18, .20, .11, .11],  # dark/bold
             [0, -.05, .1, .1, .05, .05]  # dark/subtle
         ]
 

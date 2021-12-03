@@ -36,13 +36,13 @@ function FakeSite(props) {
 
     switch (version) {
         case 1:
-            return (<FakeSiteOne colors={[...colors]} />);
+            return (<Container className="fakesite-box"><FakeSiteOne colors={[...colors]} /></Container>);
             break;
         case 2:
-            return (<FakeSiteTwo colors={[...colors]} />);
+            return (<Container className="fakesite-box"><FakeSiteTwo colors={[...colors]} /></Container>);
             break;
         default:
-            return (<FakeSiteOne colors={[...colors]} />);
+            return (<Container className="fakesite-box"><FakeSiteOne colors={[...colors]} /></Container>);
             break;
         // Add more cases for each fake site
     }
@@ -56,6 +56,15 @@ function FakeSiteOne(props) {
     // TODO: edit this html based on the number of colors included.
     const [colors, setColors] = useState(props.colors);
 
+    //makes the text readable on the given bg
+    var tinycolor = require("tinycolor2"); //this makes tinycolor work
+    let textcolors = ["#fff", "#fff", "#fff", "#fff", "#fff", "#fff"];
+    for (let i = 0; i < colors.length; i++) {
+        textcolors[i] = tinycolor.mostReadable(colors[i], ['#000', '#fff']).toHexString();
+    }
+
+    
+
     // First render
     useEffect(() => {
         setColors(props.colors);
@@ -67,39 +76,42 @@ function FakeSiteOne(props) {
     }, [props]);
 
     return (
-        <Container className="palette-box" style={{backgroundColor: '#' + colors.at(1)}}>
+        <Container className="palette-box" style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>
 
             {/* <div>color list: {colors.at(0)} , {colors.at(1)} , {colors.at(2)} , {colors.at(3)} , {colors.at(4)} , {colors.at(5)} , {colors.at(6)}</div> */}
             
-            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(4)}}>
+            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(4), color: textcolors[4]}}>
                 <Col sm className="fake-title">
                     Sample UI #1
+                </Col>
+                <Col div style={{textAlign: 'center'}}>
+                    #{ colors.at(4) }
                 </Col>
                 <Col>
                     <div style={{textAlign: 'right'}}>Twitter || Facebook || LinkedIn</div>
                 </Col>
             </Row>
 
-            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(1)}}>
-                <Col></Col>
+            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>
+                <Col> #{ colors.at(1) } </Col>
                 <Col lg>
-                    <div class="fake-main-window" style={{backgroundColor: '#' + colors.at(0)}}>
-                        <div class="fake-alert" style={{backgroundColor: '#' + colors.at(3)}}>Alert! Please note that...</div>
-                        <div>This is the text in a primary window! Information goes here.</div>
-                        <div class="fake-button" style={{backgroundColor: '#' + colors.at(2)}}>Button!</div>
+                    <div class="fake-main-window" style={{backgroundColor: '#' + colors.at(0), color: textcolors[0] }}>
+                        <div class="fake-alert" style={{backgroundColor: '#' + colors.at(3), color: textcolors[3] }}> #{ colors.at(3) } Alert! Please note that...</div>
+                        <div> #{ colors.at(0) } <br/> This is the text in a primary window!<br/>Information goes here.</div>
+                        <div class="fake-button" style={{backgroundColor: '#' + colors.at(2), color: textcolors[2] }}> #{ colors.at(2) } Fake Button!</div>
                     </div>
                 </Col>
-                <Col></Col>
+                <Col> #{ colors.at(1) }</Col>
             </Row>
-            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(1)}}>
+            <Row className="fake-body" style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>
                 <Col></Col>
                 <Col lg>
-                    <div class="fake-secondary-window" style={{backgroundColor: '#' + colors.at(5)}}>This is a secondary window with additional info.</div>
+                    <div class="fake-secondary-window" style={{backgroundColor: '#' + colors.at(5), color: textcolors[5] }}> #{ colors.at(5) } This is a secondary window with additional info.</div>
                 </Col>
                 <Col></Col>
             </Row>
 
-            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(4)}}>
+            <Row className="fake-header" style={{backgroundColor: '#' + colors.at(4), color: textcolors[4] }}>
                 <Col sm>
                 Footer. Socmed links. Copyright information
                 </Col>
@@ -112,6 +124,13 @@ function FakeSiteTwo(props) {
     // TODO: edit this html based on the number of colors included.
     const [colors, setColors] = useState(props.colors);
 
+     //makes the text readable on the given bg
+     var tinycolor = require("tinycolor2"); //this makes tinycolor work
+     let textcolors = ["#fff", "#fff", "#fff", "#fff", "#fff", "#fff"];
+     for (let i = 0; i < colors.length; i++) {
+         textcolors[i] = tinycolor.mostReadable(colors[i], ['#000', '#fff']).toHexString();
+     }
+
     // First render
     useEffect(() => {
         setColors(props.colors);
@@ -123,22 +142,22 @@ function FakeSiteTwo(props) {
     }, [props]);
 
     return (
-        <Container>
-            <Navbar expand="lg" style={{backgroundColor: '#' + colors.at(0)}}>
+        <Container className="palette-box-overflow" style={{backgroundColor: '#' + colors.at(2), color: textcolors[2] }}>
+            <Navbar expand="lg" style={{backgroundColor: '#' + colors.at(0), color: textcolors[0] }}>
             <Container>
                 <Navbar.Brand>Navigation Bar: Click to Dropdown</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                    <Nav.Link style={{backgroundColor: '#' + colors.at(1)}}>Home (Have at least 2 colors in your palette to alternate colors)</Nav.Link>
-                    <Nav.Link style={{backgroundColor: '#' + colors.at(0)}}>Link</Nav.Link>
-                    <NavDropdown title="Dropdown" id="basic-nav-dropdown" style={{backgroundColor: '#' + colors.at(1)}}>
-                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(0)}}>Action</NavDropdown.Item>
-                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(1)}}>Another action</NavDropdown.Item>
-                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(0)}}> Something</NavDropdown.Item>
-                    <NavDropdown.Divider style={{backgroundColor: '#' + colors.at(0)}}/>
-                    <NavDropdown.Item style={{backgroundColor: '#' + colors.at(1)}}>Separated link</NavDropdown.Item>
-                    </NavDropdown>
+                <Nav className="me-auto" style={{backgroundColor: '#' + colors.at(2)}}>
+                    <Nav.Link style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>Home (Have at least 2 colors in your palette to alternate colors)</Nav.Link>
+                    <Nav.Link style={{backgroundColor: '#' + colors.at(0), color: textcolors[0] }}>Link</Nav.Link>
+                    <NavDropdown title="Dropdown" id="basic-nav-dropdown" style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>
+                        <NavDropdown.Item style={{backgroundColor: '#' + colors.at(0), color: textcolors[0] }}>Action</NavDropdown.Item>
+                        <NavDropdown.Item style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>Another action</NavDropdown.Item>
+                        <NavDropdown.Item style={{backgroundColor: '#' + colors.at(0), color: textcolors[0] }}> Something</NavDropdown.Item>
+                        <NavDropdown.Divider style={{backgroundColor: '#' + colors.at(0), color: textcolors[0] }}/>
+                        <NavDropdown.Item style={{backgroundColor: '#' + colors.at(1), color: textcolors[1] }}>Separated link</NavDropdown.Item>
+                    </NavDropdown> 
                 </Nav>
                 </Navbar.Collapse>
             </Container>

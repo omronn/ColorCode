@@ -14,6 +14,8 @@ function Palette() {
     const [numFakeVersions, setNumFakeVersions] = useState(2);
     const [fakeVersion, setFakeVersion] = useState(1);
     const history = useHistory();
+    var tinycolor = require("tinycolor2"); //this makes tinycolor work
+
 
     // NOTE: Needs to remain above ColorList and other functions that utilize 
     // The colorJsonList/baseColor items
@@ -60,8 +62,10 @@ function Palette() {
             link.download = 'Palette.txt'
 
             const color_list = []
+            const labels = ["Main Window: ", "Background: ", "Main Buttons: ", "Alerts: ", "Header/Footer: ", "Secondary Windows: "]
+            
             for (const [index, value] of colorJsonList.entries()) {
-                color_list.push('#' + value);
+                color_list.push(labels[index] + ' #' + value);
             }
 
             const color_string = color_list.toString().split(',').join('\n');
@@ -82,13 +86,18 @@ function Palette() {
     const ColorList = () => {
         const color_list = []
         for (const [index, value] of colorJsonList.entries()) {
+            let textcolor = tinycolor.mostReadable(value, ['#000', '#fff']).toHexString();
+
             color_list.push(
-                <Container className="sm p-1 my-1 text-white text-center align-self-center" style={{ backgroundColor: '#' + value }}>Color: #{value}</Container>
+                <Container className="sm p-1 text-center align-self-center" 
+                style={{ backgroundColor: '#' + value, color: textcolor }}>
+                    Color: #{value}
+                </Container>
             );
         }
 
         return (
-            <Container className="sm p-1 my-1 text-white text-center align-self-center">
+            <Container className="color-list text-center align-self-center">
                 {color_list}
             </Container>
         );
@@ -110,6 +119,11 @@ function Palette() {
         );
     }
 
+    const PaletteTitle = () => {
+        return (
+            <h1 className="palette-title">THE PALETTE:</h1>
+        )
+    }
 
     // ACTUALLY RUNS WHEN COMPONENT RENDERS
     return (
@@ -117,7 +131,7 @@ function Palette() {
             <h1> Example Color Usage:</h1>
             <FakeSite colors={[...colorJsonList]} version={fakeVersion} />
             <FakeSiteVersions />
-            <h1>THE PALETTE:</h1>
+            <PaletteTitle />
             <ColorList />
             <Row className="p-1 justify-content-center">
                 <Col xs="auto">  
